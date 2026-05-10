@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 
 class PixelGridPet extends StatefulWidget {
   const PixelGridPet({super.key});
@@ -11,6 +13,8 @@ class _PixelGridPetState extends State<PixelGridPet>
     with SingleTickerProviderStateMixin {
   late final AnimationController _floatController;
   late final Animation<double> _floatAnimation;
+  late final AnimationController _jumpController;
+  late final Animation<double> _jumpAnimation;
 
   static const _cellSize = 12.0;
 
@@ -24,17 +28,38 @@ class _PixelGridPetState extends State<PixelGridPet>
     _floatAnimation = Tween<double>(begin: -8, end: 0).animate(
       CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
     );
+    _jumpController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _jumpAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: -40), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: -40, end: 0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _jumpController, curve: Curves.easeOut));
   }
 
   @override
   void dispose() {
     _floatController.dispose();
+    _jumpController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final provider = context.watch<PetStateProvider>();
+    final sensorReading = provider.sensorReading;
+
+    if (provider.isPetJumping && !_jumpController.isAnimating) {
+      _jumpController.forward(from: 0).then((_) {
+        provider.setPetJumping(false);
+      });
+    }
+
+    // Calculate tilt
+    final tiltX = (sensorReading.accelerometerX ?? 0).clamp(-5, 5) / 5.0;
+    final tiltY = (sensorReading.accelerometerY ?? 0).clamp(-5, 5) / 5.0;
     return SizedBox(
       height: 240,
       child: Stack(
@@ -56,8 +81,11 @@ class _PixelGridPetState extends State<PixelGridPet>
             child: AnimatedBuilder(
               animation: _floatAnimation,
               builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(0, _floatAnimation.value),
+                return Transform(
+                  transform: Matrix4.identity()
+                    ..translate(tiltX * 15, _floatAnimation.value + _jumpAnimation.value + (tiltY * 5))
+                    ..skewX(-tiltX * 0.05),
+                  alignment: Alignment.center,
                   child: child,
                 );
               },

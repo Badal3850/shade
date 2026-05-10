@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 
 class SoftCharacterPet extends StatefulWidget {
   const SoftCharacterPet({super.key});
@@ -13,6 +15,8 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
   late final Animation<double> _floatAnimation;
   late final AnimationController _glowController;
   late final Animation<double> _glowAnimation;
+  late final AnimationController _jumpController;
+  late final Animation<double> _jumpAnimation;
 
   @override
   void initState() {
@@ -31,18 +35,40 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
     _glowAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
     );
+    _jumpController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _jumpAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: -30), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: -30, end: 0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _jumpController, curve: Curves.easeOut));
   }
 
   @override
   void dispose() {
     _floatController.dispose();
     _glowController.dispose();
+    _jumpController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final provider = context.watch<PetStateProvider>();
+    final sensorReading = provider.sensorReading;
+
+    if (provider.isPetJumping && !_jumpController.isAnimating) {
+      _jumpController.forward(from: 0).then((_) {
+        provider.setPetJumping(false);
+      });
+    }
+    
+    // Calculate tilt from accelerometer (normalized roughly)
+    final tiltX = (sensorReading.accelerometerX ?? 0).clamp(-5, 5) / 5.0;
+    final tiltY = (sensorReading.accelerometerY ?? 0).clamp(-5, 5) / 5.0;
+
     return SizedBox(
       height: 170,
       child: Stack(
@@ -69,14 +95,16 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
           ),
           // Pet character
           AnimatedBuilder(
-            animation: _floatAnimation,
+            animation: Listenable.merge([_floatAnimation, _jumpAnimation]),
             builder: (context, _) {
-              return Transform.translate(
-                offset: Offset(0, _floatAnimation.value),
-                child: Transform.rotate(
-                  angle: (_floatAnimation.value / 10) * 0.02,
-                  child: _buildCharacter(context),
-                ),
+              return Transform(
+                transform: Matrix4.identity()
+                  ..translate(0.0, _floatAnimation.value + _jumpAnimation.value)
+                  ..rotateZ((_floatAnimation.value / 10) * 0.02)
+                  ..rotateY(tiltX * 0.2)
+                  ..rotateX(-tiltY * 0.1),
+                alignment: Alignment.center,
+                child: _buildCharacter(context, tiltX, tiltY),
               );
             },
           ),
@@ -85,7 +113,7 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
     );
   }
 
-  Widget _buildCharacter(BuildContext context) {
+  Widget _buildCharacter(BuildContext context, double tiltX, double tiltY) {
     return SizedBox(
       width: 120,
       height: 140,
@@ -249,8 +277,8 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
           ),
           // Eyes
           Positioned(
-            top: 32,
-            left: 18,
+            top: 32 + (tiltY * 2),
+            left: 18 + (tiltX * 3),
             child: ClipOval(
               child: Container(
                 width: 14,
@@ -291,8 +319,8 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
             ),
           ),
           Positioned(
-            top: 32,
-            right: 18,
+            top: 32 + (tiltY * 2),
+            right: 18 - (tiltX * 3),
             child: ClipOval(
               child: Container(
                 width: 14,

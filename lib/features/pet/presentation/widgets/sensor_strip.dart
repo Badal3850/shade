@@ -38,11 +38,15 @@ class _SensorItem {
 }
 
 List<_SensorItem> _buildSensorItems(SensorReading reading) {
+  final movement = (reading.accelerometerX?.abs() ?? 0) +
+      (reading.accelerometerY?.abs() ?? 0) +
+      (reading.accelerometerZ?.abs() ?? 0);
+  
   return [
     _SensorItem(
-      label: 'LIGHT',
-      value: reading.lightLevel != null ? '${reading.lightLevel!.toInt()} lux' : '--',
-      icon: Icons.light_mode,
+      label: 'MOVEMENT',
+      value: movement > 0.1 ? movement.toStringAsFixed(2) : 'IDLE',
+      icon: Icons.vibration,
     ),
     _SensorItem(
       label: 'BATTERY',

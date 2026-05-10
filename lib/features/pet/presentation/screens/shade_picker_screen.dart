@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shade/core/theme/theme_manager.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ShadePickerScreen extends StatelessWidget {
   const ShadePickerScreen({super.key});
@@ -11,12 +13,10 @@ class ShadePickerScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'SELECT SHADE',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('SELECT SHADE')
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideY(begin: -0.2, end: 0),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -33,9 +33,12 @@ class ShadePickerScreen extends StatelessWidget {
             child: _ShadeTile(
               style: style,
               isSelected: isSelected,
-              onTap: () => themeManager.setStyle(style),
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                themeManager.setStyle(style);
+              },
             ),
-          );
+          ).animate().fadeIn(delay: (index * 100).ms, duration: 500.ms).slideX(begin: 0.1, end: 0);
         },
       ),
     );

@@ -31,23 +31,32 @@ class _BottomNavShellState extends State<BottomNavShell> {
   @override
   Widget build(BuildContext context) {
     final themeStyle = _resolveTheme(context);
-    return Scaffold(
-      body: PageTransitionSwitcher(
-        duration: const Duration(milliseconds: 400),
-        reverse: false,
-        transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-          return FadeThroughTransition(
-            animation: primaryAnimation,
-            secondaryAnimation: secondaryAnimation,
-            child: child,
-          );
-        },
-        child: KeyedSubtree(
-          key: ValueKey<int>(_currentIndex),
-          child: _screens[_currentIndex],
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        body: PageTransitionSwitcher(
+          duration: const Duration(milliseconds: 400),
+          reverse: false,
+          transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+            return FadeThroughTransition(
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            );
+          },
+          child: KeyedSubtree(
+            key: ValueKey<int>(_currentIndex),
+            child: _screens[_currentIndex],
+          ),
         ),
+        bottomNavigationBar: _buildNav(context, themeStyle),
       ),
-      bottomNavigationBar: _buildNav(context, themeStyle),
     );
   }
 

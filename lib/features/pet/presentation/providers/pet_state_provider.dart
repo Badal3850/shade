@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shade/features/pet/data/datasources/visit_db_datasource.dart';
 import 'package:shade/features/pet/domain/entities/pet_entity.dart';
 import 'package:shade/features/pet/domain/repositories/pet_repository.dart';
@@ -16,8 +17,13 @@ class PetStateProvider extends ChangeNotifier {
   SensorReading _sensorReading = SensorReading(timestamp: DateTime.now());
   bool _isLoading = true;
   String? _error;
+  StreamSubscription<SensorReading>? _sensorSubscription;
   Timer? _pollTimer;
+  Timer? _logTimer;
   int? _currentVisitId;
+  DateTime? _lastShakeTime;
+  bool _isPetJumping = false;
+  static const double _shakeThreshold = 15.0;
 
   PetStateProvider({
     required PetRepository petRepository,
@@ -30,12 +36,19 @@ class PetStateProvider extends ChangeNotifier {
   PetEntity get petState => _petState;
   SensorReading get sensorReading => _sensorReading;
   bool get isLoading => _isLoading;
+  bool get isPetJumping => _isPetJumping;
   String? get error => _error;
 
   Future<void> initialize() async {
     _isLoading = true;
     notifyListeners();
     try {
+      // Request permissions
+      await [
+        Permission.activityRecognition,
+        Permission.sensors,
+      ].request();
+
       final lastVisit = await _visitDbDataSource.getLastVisit();
       if (lastVisit != null && lastVisit.closedAt != null) {
         _petState = await _petRepository.calculateDecay(lastVisit.closedAt!);
@@ -47,6 +60,8 @@ class PetStateProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       _startPolling();
+      _startSensorSubscription();
+      _startBackgroundLogging();
     } catch (e, stack) {
       debugPrint('[PetStateProvider] initialize error: $e');
       debugPrint('[PetStateProvider] stack: $stack');
@@ -65,6 +80,67 @@ class PetStateProvider extends ChangeNotifier {
     });
   }
 
+  void _startSensorSubscription() {
+    _sensorSubscription?.cancel();
+    _sensorSubscription = _sensorRepository.getSensorStream().listen((reading) {
+      // Detect shake
+      final accelX = reading.accelerometerX ?? 0;
+      final accelY = reading.accelerometerY ?? 0;
+      final accelZ = reading.accelerometerZ ?? 0;
+      final magnitude = accelX.abs() + accelY.abs() + accelZ.abs();
+
+      if (magnitude > _shakeThreshold) {
+        final now = DateTime.now();
+        if (_lastShakeTime == null ||
+            now.difference(_lastShakeTime!) > const Duration(seconds: 1)) {
+          _lastShakeTime = now;
+          _handleShake();
+        }
+      }
+
+      // Merge with existing battery/steps data
+      _sensorReading = SensorReading(
+        accelerometerX: reading.accelerometerX,
+        accelerometerY: reading.accelerometerY,
+        accelerometerZ: reading.accelerometerZ,
+        batteryLevel: _sensorReading.batteryLevel,
+        stepCount: _sensorReading.stepCount,
+        lightLevel: _sensorReading.lightLevel,
+        timestamp: reading.timestamp,
+      );
+      notifyListeners();
+    });
+  }
+
+  void _handleShake() async {
+    HapticFeedback.mediumImpact();
+    _isPetJumping = true;
+    // Increase mood/energy slightly when played with via shake
+    _petState = _petState.copyWith(
+      mood: (_petState.mood + 5).clamp(0, 100),
+      energy: (_petState.energy - 2).clamp(0, 100),
+    );
+    notifyListeners();
+    await _petRepository.updateState(_petState);
+  }
+
+  void setPetJumping(bool value) {
+    _isPetJumping = value;
+    notifyListeners();
+  }
+
+  void _startBackgroundLogging() {
+    _logTimer?.cancel();
+    // Log state every 5 minutes
+    _logTimer = Timer.periodic(const Duration(minutes: 5), (_) async {
+      try {
+        final current = await _sensorRepository.getCurrentReading();
+        _sensorReading = current;
+        notifyListeners();
+      } catch (_) {}
+    });
+  }
+
   Future<void> recordClose() async {
     if (_currentVisitId != null) {
       await _visitDbDataSource.recordClose(_currentVisitId!);
@@ -75,6 +151,8 @@ class PetStateProvider extends ChangeNotifier {
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _sensorSubscription?.cancel();
+    _logTimer?.cancel();
     super.dispose();
   }
 }

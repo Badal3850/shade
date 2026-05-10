@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shade/features/sensors/data/datasources/sensor_db_datasource.dart';
 import 'package:shade/features/sensors/data/datasources/sensor_local_datasource.dart';
 import 'package:shade/features/sensors/data/models/sensor_mappers.dart';
@@ -37,9 +38,15 @@ class SensorRepositoryImpl implements SensorRepository {
 
   @override
   Stream<SensorReading> getSensorStream() {
-    return _localDataSource.getAccelerometerStream().asyncMap(
-      (_) => getCurrentReading(),
-    );
+    // We listen to userAccelerometerEventStream which excludes gravity for easier tilt detection
+    return userAccelerometerEventStream(samplingPeriod: SensorInterval.uiInterval).map((event) {
+      return SensorReading(
+        accelerometerX: event.x,
+        accelerometerY: event.y,
+        accelerometerZ: event.z,
+        timestamp: DateTime.now(),
+      );
+    });
   }
 
   @override
