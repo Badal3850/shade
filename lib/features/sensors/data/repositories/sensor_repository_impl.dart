@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:shade/features/sensors/data/datasources/sensor_db_datasource.dart';
 import 'package:shade/features/sensors/data/datasources/sensor_local_datasource.dart';
 import 'package:shade/features/sensors/data/models/sensor_mappers.dart';
@@ -13,12 +14,24 @@ class SensorRepositoryImpl implements SensorRepository {
 
   @override
   Future<SensorReading> getCurrentReading() async {
-    final batteryLevel = await _localDataSource.getCurrentBatteryLevel();
+    int? batteryLevel;
+    try {
+      batteryLevel = await _localDataSource.getCurrentBatteryLevel();
+    } catch (e) {
+      debugPrint('[SensorRepo] Battery read failed: $e');
+    }
+
     final reading = SensorReading(
       batteryLevel: batteryLevel,
       timestamp: DateTime.now(),
     );
-    await _dbDataSource.insertSensorLog(readingToCompanion(reading));
+
+    try {
+      await _dbDataSource.insertSensorLog(readingToCompanion(reading));
+    } catch (e) {
+      debugPrint('[SensorRepo] DB insert failed: $e');
+    }
+
     return reading;
   }
 
@@ -43,3 +56,4 @@ class SensorRepositoryImpl implements SensorRepository {
     return total;
   }
 }
+

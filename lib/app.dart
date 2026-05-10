@@ -1,35 +1,45 @@
 import 'package:flutter/material.dart';
-import 'core/theme/app_theme.dart';
+import 'core/di/injection_container.dart';
+import 'core/navigation/app_router.dart';
+import 'core/theme/theme_manager.dart';
 
-class ShadeApp extends StatelessWidget {
-  const ShadeApp({super.key});
+class ShadeApp extends StatefulWidget {
+  final ThemeManager? themeManager;
+
+  const ShadeApp({super.key, this.themeManager});
+
+  @override
+  State<ShadeApp> createState() => _ShadeAppState();
+}
+
+class _ShadeAppState extends State<ShadeApp> {
+  late final ThemeManager _themeManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeManager = widget.themeManager ?? sl<ThemeManager>();
+    _themeManager.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    _themeManager.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'shade',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      theme: _themeManager.lightTheme,
+      darkTheme: _themeManager.darkTheme,
+      themeMode: _themeManager.currentMode,
       initialRoute: '/',
-      onGenerateRoute: (settings) {
-        return null;
-      },
-      home: const _AppHome(),
-    );
-  }
-}
-
-class _AppHome extends StatelessWidget {
-  const _AppHome();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('shade'),
-      ),
+      onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }

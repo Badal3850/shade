@@ -1,4 +1,4 @@
-package com.badalm.digital_pet
+package com.badalm.shade
 
 import io.flutter.embedding.android.FlutterActivity
 

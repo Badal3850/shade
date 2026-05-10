@@ -39,6 +39,9 @@ migrate_working_dir/
 # Signing (never commit keystore to version control)
 /android/keystore.jks
 
+# Environment variables (never commit secrets)
+.env
+
 # Symbolication related
 app.*.symbols
 

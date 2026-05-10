@@ -1,0 +1,535 @@
+MIME-Version: 1.0
+Date: Sun, 10 May 2026 17:16:56 +0530
+Message-ID: <CANVOcRL6KJpD3fLDa3mB9x9kf9xoMeMGpGxShdxKjEtguzVSyw@mail.gmail.com>
+Subject: =?UTF-8?B?8J+OqCBTaGFkZSDigJQgVUkgRGVzaWduIFBsYW4gKFVwZGF0ZWQp?=
+From: Badal Meher <bm3850@gmail.com>
+To: Badal Meher <badalmeher50@gmail.com>
+Content-Type: multipart/alternative; boundary="000000000000e159bb0651752f97"
+
+--000000000000e159bb0651752f97
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+ SHADE.APP =C2=B7 DESIGN SYSTEM
+UI Design Plan
+
+Complete visual design specification for *Shade* =E2=80=94 the digital pet =
+app that
+feels your world
+*App Name: Shade* =E2=80=94 a dual meaning at its core. A *shade* is a them=
+e, a
+visual skin, a mood. But Shade is also what the pet gives you when you've
+been neglecting it. The name lives in both the design system and the
+personality of the app.
+01 =C2=B7 Design Philosophy
+
+The UI is not a wrapper around the pet =E2=80=94 *it is the pet's world.* E=
+very
+Shade makes Mochi feel like it belongs to a different universe while
+keeping the core emotional contract intact: the pet lives in your phone, it
+notices your life, and it has opinions about it.
+=F0=9F=8E=AD
+Character first
+Every screen makes the pet feel like a real personality, not a stat tracker
+=F0=9F=93=B1
+Glanceable
+The most important info visible in under 2 seconds on every screen
+=E2=9C=A8
+Shareable moments
+Every screen has at least one element designed to be screenshot-worthy
+02 =C2=B7 The Shade System
+
+5 Shades ship in v1. Each is a complete design system =E2=80=94 typography,=
+ color,
+spacing, and component style all change together. Users pick a Shade at
+onboarding and can switch anytime from Settings. The active Shade also
+styles the pet's weekly Instagram story card, so every share looks unique.
+Y2K GLITCH
+Dark =C2=B7 Pixel art =C2=B7 CRT energy
+OLED black with cyan + pink + yellow neon. Scanline overlay. Press Start 2P
++ VT323 typefaces. Pixel art stat bars. Feels like a bootleg Tamagotchi on
+a hacked console.
+#00FFEE #FF2D78 #FFEE00 #9B00FF
+SOFT DARK
+Purple =C2=B7 Glassmorphism =C2=B7 Editorial
+Deep purple-black, lavender + rose pastels. Instrument Serif italic
+headlines. Frosted glass cards. The pet feels like it lives in a late-night
+journal entry.
+#C4B5FD #F4A0B5 #FBBF8A
+FOREST
+Deep green =C2=B7 Organic =C2=B7 Calm
+Dark forest greens with mint accents. Playfair Display serif. Your pet
+lives in a quiet mossy terrarium. For users who want calm over chaos.
+#86EFCA #4ADE80 #D4F0E0
+SUNSET
+Burnt orange =C2=B7 Bold type =C2=B7 Raw energy
+Charred black with amber + burnt orange. Bebas Neue all-caps. Sharp edges.
+Feels like a vintage sci-fi paperback. Bold, loud, opinionated.
+#FF6B35 #FBBF24 #FFE0C8
+PAPER
+Warm cream =C2=B7 Serif =C2=B7 Literary
+The only light Shade. Warm parchment base, sienna accents. Playfair italic.
+Feels like reading your pet's diary on aged paper.
+#F5F0E8 #8B4513 #2A1F0F
+03 =C2=B7 Screen Inventory
+Screen Purpose Priority
+Splash / Boot App open animation, pet waking up, active Shade loads v1
+Onboarding Name pet, pick voice, choose your first Shade v1
+Home Pet viewport, sensor chips, vitals, latest post v1
+Check-In Modal Pet reacts to what happened since last visit v1
+Feed All pet posts, shareable story cards v1
+Story Card Generator Weekly Instagram export, styled to active Shade v1
+Stats / History Sensor charts, mood trends, notable days v1
+Shade Picker Live theme switcher =E2=80=94 5 Shades, instant preview v1
+Milestone Cards Day 7, 30, 100 celebration screens =E2=80=94 shareable v1
+Year-End Letter Full-screen cinematic Dec 31 experience v1 Pro
+Nearby Encounters Bluetooth pet meeting screen, encounter history v2 04 =C2=
+=B7
+Pet Animation States
+State Trigger Description
+Idle Default Gentle float, blink, breathing
+Happy High mood, good steps Bouncing, tail wag, sparkles
+Sad Long neglect, low mood Drooping, single tear, slow movement
+Startled Phone drop, sudden shake Jump, sweat drop, wide eyes
+Sleepy Dark environment, late night Half-closed eyes, ZZZ bubbles
+Hungry Battery < 15% Grabs stomach, stressed movement
+Fed Plugged in to charge Runs to bowl, happy eating animation
+Giving Shade =F0=9F=98=82 Grudge state post-neglect Facing away, arms cross=
+ed,
+ignores taps 05 =C2=B7 Flutter Implementation Notes
+
+   - Shade system via *ThemeData + InheritedWidget* =E2=80=94 full hot-swap=
+,
+   persisted via SharedPreferences
+   - Pet animations via *Rive* =E2=80=94 state machine with 8 named states
+   - Story card export via *RepaintBoundary =E2=86=92 PNG =E2=86=92 share_p=
+lus*
+   - Sensor chips update every foreground via *WidgetsBindingObserver*
+   - Story cards inherit the active Shade =E2=80=94 same palette, same font=
+s,
+   social-optimised layout
+   - All dark Shades use true *AMOLED black (#000000)* for battery savings
+   - Accessibility: 4.5:1 contrast minimum, haptic feedback on all pet
+   interactions
+
+06 =C2=B7 Next Design Steps
+*Week 1:* Pet character illustration =E2=80=94 all 8 states drawn, handed t=
+o Rive
+animator
+*Week 2:* Build Shade system in Flutter =E2=80=94 all 5 Shades coded, live =
+switcher
+working
+*Week 3:* Home screen + Check-In modal =E2=80=94 pet reacts to sensor snaps=
+hot on
+open
+*Week 4:* Story card generator + Feed =E2=80=94 Claude API pipeline produce=
+s themed
+post cards
+*Week 5=E2=80=936:* Onboarding, Shade Picker, Stats =E2=80=94 full app shel=
+l, ready for
+internal test
+------------------------------
+
+Generated by Claude =C2=B7 May 2026 =C2=B7 Shade Design System v0.1
+
+--000000000000e159bb0651752f97
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><u></u>
+
+<div style=3D"font-family:&#39;Segoe UI&#39;,Arial,sans-serif;max-width:720=
+px;margin:0 auto;color:#1a1a1a;line-height:1.7;background:#ffffff">
+
+ =20
+  <div style=3D"background:linear-gradient(135deg,#0a0a0f 0%,#1a0a2e 50%,#0=
+a1020 100%);padding:36px 40px;border-radius:12px 12px 0 0">
+    <div style=3D"font-family:monospace;font-size:11px;color:rgba(0,255,238=
+,0.5);letter-spacing:4px;margin-bottom:8px"><a href=3D"http://SHADE.APP" ta=
+rget=3D"_blank">SHADE.APP</a> =C2=B7 DESIGN SYSTEM</div>
+    <h1 style=3D"color:#ffffff;margin:0;font-size:28px;font-weight:700;lett=
+er-spacing:-0.5px">UI Design Plan</h1>
+    <p style=3D"color:rgba(255,255,255,0.45);margin:8px 0 0;font-size:14px"=
+>Complete visual design specification for <strong style=3D"color:rgba(255,2=
+55,255,0.7)">Shade</strong> =E2=80=94 the digital pet app that feels your w=
+orld</p>
+  </div>
+
+  <div style=3D"background:#fafafa;padding:0 40px 40px;border:1px solid #ee=
+e;border-top:none;border-radius:0 0 12px 12px">
+
+   =20
+    <div style=3D"background:linear-gradient(135deg,rgba(196,181,253,0.08),=
+rgba(244,160,181,0.05));border:1px solid rgba(196,181,253,0.2);border-radiu=
+s:10px;padding:14px 18px;margin-top:24px;font-size:13px;color:#444">
+      <strong style=3D"color:#7c3aed">App Name: Shade</strong> =E2=80=94 a =
+dual meaning at its core. A <em>shade</em> is a theme, a visual skin, a moo=
+d. But Shade is also what the pet gives you when you&#39;ve been neglecting=
+ it. The name lives in both the design system and the personality of the ap=
+p.
+    </div>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:32px;letter-spacing:0.02em">01 =C2=B7 Design Phi=
+losophy</h2>
+    <p style=3D"font-size:14px;color:#444">The UI is not a wrapper around t=
+he pet =E2=80=94 <strong>it is the pet&#39;s world.</strong> Every Shade ma=
+kes Mochi feel like it belongs to a different universe while keeping the co=
+re emotional contract intact: the pet lives in your phone, it notices your =
+life, and it has opinions about it.</p>
+    <div style=3D"display:flex;margin-top:14px">
+      <div style=3D"min-width:160px;background:white;border:1px solid #e5e5=
+e5;border-radius:10px;padding:14px">
+        <div style=3D"font-size:20px;margin-bottom:6px">=F0=9F=8E=AD</div>
+        <div style=3D"font-weight:600;font-size:13px;margin-bottom:4px">Cha=
+racter first</div>
+        <div style=3D"font-size:12px;color:#666">Every screen makes the pet=
+ feel like a real personality, not a stat tracker</div>
+      </div>
+      <div style=3D"min-width:160px;background:white;border:1px solid #e5e5=
+e5;border-radius:10px;padding:14px">
+        <div style=3D"font-size:20px;margin-bottom:6px">=F0=9F=93=B1</div>
+        <div style=3D"font-weight:600;font-size:13px;margin-bottom:4px">Gla=
+nceable</div>
+        <div style=3D"font-size:12px;color:#666">The most important info vi=
+sible in under 2 seconds on every screen</div>
+      </div>
+      <div style=3D"min-width:160px;background:white;border:1px solid #e5e5=
+e5;border-radius:10px;padding:14px">
+        <div style=3D"font-size:20px;margin-bottom:6px">=E2=9C=A8</div>
+        <div style=3D"font-weight:600;font-size:13px;margin-bottom:4px">Sha=
+reable moments</div>
+        <div style=3D"font-size:12px;color:#666">Every screen has at least =
+one element designed to be screenshot-worthy</div>
+      </div>
+    </div>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:36px">02 =C2=B7 The Shade System</h2>
+    <p style=3D"font-size:14px;color:#444;margin-bottom:16px">5 Shades ship=
+ in v1. Each is a complete design system =E2=80=94 typography, color, spaci=
+ng, and component style all change together. Users pick a Shade at onboardi=
+ng and can switch anytime from Settings. The active Shade also styles the p=
+et&#39;s weekly Instagram story card, so every share looks unique.</p>
+
+   =20
+    <div style=3D"background:#0a0a0f;border-radius:10px;padding:18px 20px;m=
+argin-bottom:10px">
+      <div style=3D"display:flex;margin-bottom:8px">
+        <div style=3D"width:32px;height:32px;background:linear-gradient(135=
+deg,#0a0a0f 50%,#00ffee 50%);border-radius:8px;border:1px solid rgba(0,255,=
+238,0.3)"></div>
+        <div>
+          <div style=3D"font-weight:700;color:#00ffee;font-family:monospace=
+;font-size:13px">Y2K GLITCH</div>
+          <div style=3D"font-size:11px;color:rgba(255,255,255,0.4);font-fam=
+ily:monospace">Dark =C2=B7 Pixel art =C2=B7 CRT energy</div>
+        </div>
+      </div>
+      <div style=3D"font-size:13px;color:rgba(255,255,255,0.6)">OLED black =
+with cyan + pink + yellow neon. Scanline overlay. Press Start 2P + VT323 ty=
+pefaces. Pixel art stat bars. Feels like a bootleg Tamagotchi on a hacked c=
+onsole.</div>
+      <div style=3D"margin-top:10px;display:flex">
+        <span style=3D"background:#00ffee;color:#000;font-size:10px;font-fa=
+mily:monospace;padding:2px 8px;border-radius:2px">#00FFEE</span>
+        <span style=3D"background:#ff2d78;color:#fff;font-size:10px;font-fa=
+mily:monospace;padding:2px 8px;border-radius:2px">#FF2D78</span>
+        <span style=3D"background:#ffee00;color:#000;font-size:10px;font-fa=
+mily:monospace;padding:2px 8px;border-radius:2px">#FFEE00</span>
+        <span style=3D"background:#9b00ff;color:#fff;font-size:10px;font-fa=
+mily:monospace;padding:2px 8px;border-radius:2px">#9B00FF</span>
+      </div>
+    </div>
+
+   =20
+    <div style=3D"background:#12101a;border-radius:10px;padding:18px 20px;m=
+argin-bottom:10px">
+      <div style=3D"display:flex;margin-bottom:8px">
+        <div style=3D"width:32px;height:32px;background:linear-gradient(135=
+deg,#1a1228 50%,#c4b5fd 50%);border-radius:8px;border:1px solid rgba(196,18=
+1,253,0.2)"></div>
+        <div>
+          <div style=3D"font-weight:700;color:#c4b5fd;font-size:13px">SOFT =
+DARK</div>
+          <div style=3D"font-size:11px;color:rgba(255,255,255,0.35)">Purple=
+ =C2=B7 Glassmorphism =C2=B7 Editorial</div>
+        </div>
+      </div>
+      <div style=3D"font-size:13px;color:rgba(255,255,255,0.55)">Deep purpl=
+e-black, lavender + rose pastels. Instrument Serif italic headlines. Froste=
+d glass cards. The pet feels like it lives in a late-night journal entry.</=
+div>
+      <div style=3D"margin-top:10px;display:flex">
+        <span style=3D"background:#c4b5fd;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#C4B5FD</span>
+        <span style=3D"background:#f4a0b5;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#F4A0B5</span>
+        <span style=3D"background:#fbbf8a;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#FBBF8A</span>
+      </div>
+    </div>
+
+   =20
+    <div style=3D"background:#0a1a0c;border-radius:10px;padding:18px 20px;m=
+argin-bottom:10px">
+      <div style=3D"display:flex;margin-bottom:8px">
+        <div style=3D"width:32px;height:32px;background:linear-gradient(135=
+deg,#0d1a0e 50%,#86efca 50%);border-radius:8px;border:1px solid rgba(134,23=
+9,202,0.2)"></div>
+        <div>
+          <div style=3D"font-weight:700;color:#86efca;font-size:13px">FORES=
+T</div>
+          <div style=3D"font-size:11px;color:rgba(255,255,255,0.35)">Deep g=
+reen =C2=B7 Organic =C2=B7 Calm</div>
+        </div>
+      </div>
+      <div style=3D"font-size:13px;color:rgba(255,255,255,0.55)">Dark fores=
+t greens with mint accents. Playfair Display serif. Your pet lives in a qui=
+et mossy terrarium. For users who want calm over chaos.</div>
+      <div style=3D"margin-top:10px;display:flex">
+        <span style=3D"background:#86efca;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#86EFCA</span>
+        <span style=3D"background:#4ade80;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#4ADE80</span>
+        <span style=3D"background:#d4f0e0;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:10px">#D4F0E0</span>
+      </div>
+    </div>
+
+   =20
+    <div style=3D"background:#130800;border-radius:10px;padding:18px 20px;m=
+argin-bottom:10px">
+      <div style=3D"display:flex;margin-bottom:8px">
+        <div style=3D"width:32px;height:32px;background:linear-gradient(135=
+deg,#1a0a00 50%,#ff6b35 50%);border-radius:8px;border:1px solid rgba(255,10=
+7,53,0.3)"></div>
+        <div>
+          <div style=3D"font-weight:700;color:#ff6b35;font-size:13px">SUNSE=
+T</div>
+          <div style=3D"font-size:11px;color:rgba(255,255,255,0.35)">Burnt =
+orange =C2=B7 Bold type =C2=B7 Raw energy</div>
+        </div>
+      </div>
+      <div style=3D"font-size:13px;color:rgba(255,255,255,0.55)">Charred bl=
+ack with amber + burnt orange. Bebas Neue all-caps. Sharp edges. Feels like=
+ a vintage sci-fi paperback. Bold, loud, opinionated.</div>
+      <div style=3D"margin-top:10px;display:flex">
+        <span style=3D"background:#ff6b35;color:#fff;font-size:10px;padding=
+:2px 8px;border-radius:4px">#FF6B35</span>
+        <span style=3D"background:#fbbf24;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:4px">#FBBF24</span>
+        <span style=3D"background:#ffe0c8;color:#000;font-size:10px;padding=
+:2px 8px;border-radius:4px">#FFE0C8</span>
+      </div>
+    </div>
+
+   =20
+    <div style=3D"background:#f5f0e8;border-radius:10px;padding:18px 20px;m=
+argin-bottom:10px;border:1px solid #e8e0d0">
+      <div style=3D"display:flex;margin-bottom:8px">
+        <div style=3D"width:32px;height:32px;background:linear-gradient(135=
+deg,#f5f0e8 50%,#2a1f0f 50%);border-radius:8px;border:1px solid rgba(42,31,=
+15,0.2)"></div>
+        <div>
+          <div style=3D"font-weight:700;color:#2a1f0f;font-size:13px">PAPER=
+</div>
+          <div style=3D"font-size:11px;color:rgba(42,31,15,0.45)">Warm crea=
+m =C2=B7 Serif =C2=B7 Literary</div>
+        </div>
+      </div>
+      <div style=3D"font-size:13px;color:rgba(42,31,15,0.65)">The only ligh=
+t Shade. Warm parchment base, sienna accents. Playfair italic. Feels like r=
+eading your pet&#39;s diary on aged paper.</div>
+      <div style=3D"margin-top:10px;display:flex">
+        <span style=3D"background:#f5f0e8;color:#2a1f0f;font-size:10px;padd=
+ing:2px 8px;border-radius:10px;border:1px solid #d0c8b8">#F5F0E8</span>
+        <span style=3D"background:#8b4513;color:#fff;font-size:10px;padding=
+:2px 8px;border-radius:10px">#8B4513</span>
+        <span style=3D"background:#2a1f0f;color:#fff;font-size:10px;padding=
+:2px 8px;border-radius:10px">#2A1F0F</span>
+      </div>
+    </div>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:36px">03 =C2=B7 Screen Inventory</h2>
+    <table style=3D"width:100%;border-collapse:collapse;font-size:13px">
+      <tbody><tr style=3D"background:#111;color:white">
+        <th style=3D"padding:10px 12px;text-align:left;border-radius:8px 0 =
+0 0">Screen</th>
+        <th style=3D"padding:10px 12px;text-align:left">Purpose</th>
+        <th style=3D"padding:10px 12px;text-align:left;border-radius:0 8px =
+0 0">Priority</th>
+      </tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Splash / Boot</td><td style=3D"padding:9px 12px;borde=
+r-bottom:1px solid #eee">App open animation, pet waking up, active Shade lo=
+ads</td><td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><span s=
+tyle=3D"background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px=
+;font-size:11px">v1</span></td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Onboarding</td><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Name pet, pick voice, choose your first Shade</td><=
+td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><span style=3D"b=
+ackground:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-siz=
+e:11px">v1</span></td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Home</td><td style=3D"padding:9px 12px;border-bottom:=
+1px solid #eee">Pet viewport, sensor chips, vitals, latest post</td><td sty=
+le=3D"padding:9px 12px;border-bottom:1px solid #eee"><span style=3D"backgro=
+und:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:11px=
+">v1</span></td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Check-In Modal</td><td style=3D"padding:9px 12px;bo=
+rder-bottom:1px solid #eee">Pet reacts to what happened since last visit</t=
+d><td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><span style=
+=3D"background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;fon=
+t-size:11px">v1</span></td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Feed</td><td style=3D"padding:9px 12px;border-bottom:=
+1px solid #eee">All pet posts, shareable story cards</td><td style=3D"paddi=
+ng:9px 12px;border-bottom:1px solid #eee"><span style=3D"background:#dcfce7=
+;color:#166534;padding:2px 8px;border-radius:10px;font-size:11px">v1</span>=
+</td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Story Card Generator</td><td style=3D"padding:9px 1=
+2px;border-bottom:1px solid #eee">Weekly Instagram export, styled to active=
+ Shade</td><td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><spa=
+n style=3D"background:#dcfce7;color:#166534;padding:2px 8px;border-radius:1=
+0px;font-size:11px">v1</span></td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Stats / History</td><td style=3D"padding:9px 12px;bor=
+der-bottom:1px solid #eee">Sensor charts, mood trends, notable days</td><td=
+ style=3D"padding:9px 12px;border-bottom:1px solid #eee"><span style=3D"bac=
+kground:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:=
+11px">v1</span></td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Shade Picker</td><td style=3D"padding:9px 12px;bord=
+er-bottom:1px solid #eee">Live theme switcher =E2=80=94 5 Shades, instant p=
+review</td><td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><spa=
+n style=3D"background:#dcfce7;color:#166534;padding:2px 8px;border-radius:1=
+0px;font-size:11px">v1</span></td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Milestone Cards</td><td style=3D"padding:9px 12px;bor=
+der-bottom:1px solid #eee">Day 7, 30, 100 celebration screens =E2=80=94 sha=
+reable</td><td style=3D"padding:9px 12px;border-bottom:1px solid #eee"><spa=
+n style=3D"background:#dcfce7;color:#166534;padding:2px 8px;border-radius:1=
+0px;font-size:11px">v1</span></td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Year-End Letter</td><td style=3D"padding:9px 12px;b=
+order-bottom:1px solid #eee">Full-screen cinematic Dec 31 experience</td><t=
+d style=3D"padding:9px 12px;border-bottom:1px solid #eee"><span style=3D"ba=
+ckground:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:10px;font-size=
+:11px">v1 Pro</span></td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px">Nearby =
+Encounters</td><td style=3D"padding:9px 12px">Bluetooth pet meeting screen,=
+ encounter history</td><td style=3D"padding:9px 12px"><span style=3D"backgr=
+ound:#fce7f3;color:#9d174d;padding:2px 8px;border-radius:10px;font-size:11p=
+x">v2</span></td></tr>
+    </tbody></table>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:36px">04 =C2=B7 Pet Animation States</h2>
+    <table style=3D"width:100%;border-collapse:collapse;font-size:13px">
+      <tbody><tr style=3D"background:#111;color:white">
+        <th style=3D"padding:10px 12px;text-align:left">State</th>
+        <th style=3D"padding:10px 12px;text-align:left">Trigger</th>
+        <th style=3D"padding:10px 12px;text-align:left">Description</th>
+      </tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Idle</td><td style=3D"padding:9px 12px;border-bottom:=
+1px solid #eee">Default</td><td style=3D"padding:9px 12px;border-bottom:1px=
+ solid #eee">Gentle float, blink, breathing</td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Happy</td><td style=3D"padding:9px 12px;border-bott=
+om:1px solid #eee">High mood, good steps</td><td style=3D"padding:9px 12px;=
+border-bottom:1px solid #eee">Bouncing, tail wag, sparkles</td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Sad</td><td style=3D"padding:9px 12px;border-bottom:1=
+px solid #eee">Long neglect, low mood</td><td style=3D"padding:9px 12px;bor=
+der-bottom:1px solid #eee">Drooping, single tear, slow movement</td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Startled</td><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Phone drop, sudden shake</td><td style=3D"padding:9px=
+ 12px;border-bottom:1px solid #eee">Jump, sweat drop, wide eyes</td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Sleepy</td><td style=3D"padding:9px 12px;border-botto=
+m:1px solid #eee">Dark environment, late night</td><td style=3D"padding:9px=
+ 12px;border-bottom:1px solid #eee">Half-closed eyes, ZZZ bubbles</td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px;border=
+-bottom:1px solid #eee">Hungry</td><td style=3D"padding:9px 12px;border-bot=
+tom:1px solid #eee">Battery &lt; 15%</td><td style=3D"padding:9px 12px;bord=
+er-bottom:1px solid #eee">Grabs stomach, stressed movement</td></tr>
+      <tr style=3D"background:white"><td style=3D"padding:9px 12px;border-b=
+ottom:1px solid #eee">Fed</td><td style=3D"padding:9px 12px;border-bottom:1=
+px solid #eee">Plugged in to charge</td><td style=3D"padding:9px 12px;borde=
+r-bottom:1px solid #eee">Runs to bowl, happy eating animation</td></tr>
+      <tr style=3D"background:#fafafa"><td style=3D"padding:9px 12px">Givin=
+g Shade =F0=9F=98=82</td><td style=3D"padding:9px 12px">Grudge state post-n=
+eglect</td><td style=3D"padding:9px 12px">Facing away, arms crossed, ignore=
+s taps</td></tr>
+    </tbody></table>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:36px">05 =C2=B7 Flutter Implementation Notes</h2=
+>
+    <ul style=3D"font-size:14px;color:#444;padding-left:20px;line-height:2.=
+2">
+      <li>Shade system via <strong>ThemeData + InheritedWidget</strong> =E2=
+=80=94 full hot-swap, persisted via SharedPreferences</li>
+      <li>Pet animations via <strong>Rive</strong> =E2=80=94 state machine =
+with 8 named states</li>
+      <li>Story card export via <strong>RepaintBoundary =E2=86=92 PNG =E2=
+=86=92 share_plus</strong></li>
+      <li>Sensor chips update every foreground via <strong>WidgetsBindingOb=
+server</strong></li>
+      <li>Story cards inherit the active Shade =E2=80=94 same palette, same=
+ fonts, social-optimised layout</li>
+      <li>All dark Shades use true <strong>AMOLED black (#000000)</strong> =
+for battery savings</li>
+      <li>Accessibility: 4.5:1 contrast minimum, haptic feedback on all pet=
+ interactions</li>
+    </ul>
+
+   =20
+    <h2 style=3D"color:#111;font-size:16px;border-bottom:2px solid #111;pad=
+ding-bottom:6px;margin-top:36px">06 =C2=B7 Next Design Steps</h2>
+    <div style=3D"display:flex">
+      <div style=3D"background:white;border:1px solid #e5e5e5;border-left:4=
+px solid #111;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px"><=
+strong>Week 1:</strong> Pet character illustration =E2=80=94 all 8 states d=
+rawn, handed to Rive animator</div>
+      <div style=3D"background:white;border:1px solid #e5e5e5;border-left:4=
+px solid #6366f1;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px=
+"><strong>Week 2:</strong> Build Shade system in Flutter =E2=80=94 all 5 Sh=
+ades coded, live switcher working</div>
+      <div style=3D"background:white;border:1px solid #e5e5e5;border-left:4=
+px solid #8b5cf6;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px=
+"><strong>Week 3:</strong> Home screen + Check-In modal =E2=80=94 pet react=
+s to sensor snapshot on open</div>
+      <div style=3D"background:white;border:1px solid #e5e5e5;border-left:4=
+px solid #ec4899;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px=
+"><strong>Week 4:</strong> Story card generator + Feed =E2=80=94 Claude API=
+ pipeline produces themed post cards</div>
+      <div style=3D"background:white;border:1px solid #e5e5e5;border-left:4=
+px solid #f59e0b;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px=
+"><strong>Week 5=E2=80=936:</strong> Onboarding, Shade Picker, Stats =E2=80=
+=94 full app shell, ready for internal test</div>
+    </div>
+
+    <hr style=3D"border:none;border-top:1px solid #e5e5e5;margin:36px 0 20p=
+x">
+    <p style=3D"font-size:12px;color:#999;text-align:center">Generated by C=
+laude =C2=B7 May 2026 =C2=B7 Shade Design System v0.1</p>
+  </div>
+
+</div>
+
+</div>
+
+--000000000000e159bb0651752f97--
