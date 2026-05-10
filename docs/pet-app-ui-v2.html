@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mochi — Soft UI Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0b14;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --border-soft: rgba(255,255,255,0.05);
+    --text: #e8e0f0;
+    --text-dim: rgba(232,224,240,0.45);
+    --text-dimmer: rgba(232,224,240,0.25);
+    --rose: #f4a0b5;
+    --lavender: #c4b5fd;
+    --peach: #fbbf8a;
+    --mint: #86efca;
+    --sky: #93c5fd;
+    --glow-rose: rgba(244,160,181,0.15);
+    --glow-lav: rgba(196,181,253,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 0;
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* AMBIENT BG BLOBS */
+  .bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .blob-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(196,181,253,0.12) 0%, transparent 70%);
+    top: -100px; left: -100px;
+  }
+
+  .blob-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(244,160,181,0.1) 0%, transparent 70%);
+    bottom: 0; right: -80px;
+  }
+
+  .blob-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* PHONE */
+  .phone {
+    width: 390px;
+    background: #12101a;
+    border-radius: 48px;
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.5),
+      0 40px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(196,181,253,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  /* DYNAMIC ISLAND */
+  .dynamic-island {
+    width: 110px;
+    height: 32px;
+    background: #000;
+    border-radius: 20px;
+    margin: 12px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+  }
+
+  .island-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .island-cam {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #1a1a2e;
+    border: 1px solid rgba(196,181,253,0.3);
+  }
+
+  /* STATUS */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 28px 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.01em;
+  }
+
+  .status-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .status-bar-dot {
+    width: 14px; height: 7px;
+    border: 1.5px solid var(--text-dim);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .status-bar-dot::after {
+    content: '';
+    position: absolute;
+    left: 1px; top: 1px; bottom: 1px;
+    width: 65%;
+    background: var(--text-dim);
+    border-radius: 1px;
+  }
+
+  /* HERO SECTION */
+  .hero {
+    padding: 20px 24px 0;
+    position: relative;
+  }
+
+  .hero-greeting {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-dimmer);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .hero-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.1;
+    font-style: italic;
+  }
+
+  .hero-name em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--lavender), var(--rose));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .era-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(196,181,253,0.08);
+    border: 1px solid rgba(196,181,253,0.15);
+    border-radius: 100px;
+    padding: 4px 10px;
+    margin-top: 8px;
+  }
+
+  .era-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--lavender);
+    animation: pulse-dot 2s infinite;
+  }
+
+  .era-text {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--lavender);
+    letter-spacing: 0.04em;
+  }
+
+  /* PET CARD */
+  .pet-card {
+    margin: 16px 20px 0;
+    background: linear-gradient(145deg, rgba(196,181,253,0.06) 0%, rgba(244,160,181,0.04) 100%);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pet-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,181,253,0.3), transparent);
+  }
+
+  /* PET ILLUSTRATION - SVG based soft character */
+  .pet-stage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 170px;
+    position: relative;
+  }
+
+  .pet-glow {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(196,181,253,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glow-breathe 4s ease-in-out infinite;
+  }
+
+  .pet-svg {
+    position: relative;
+    z-index: 2;
+    animation: pet-float 4s ease-in-out infinite;
+    filter: drop-shadow(0 8px 20px rgba(196,181,253,0.2));
+  }
+
+  .mood-chip {
+    position: absolute;
+    top: 12px;
+    right: 0;
+    background: rgba(244,160,181,0.1);
+    border: 1px solid rgba(244,160,181,0.2);
+    border-radius: 100px;
+    padding: 5px 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .mood-chip-text {
+    font-size: 11px;
+    color: var(--rose);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .day-chip {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    background: rgba(134,239,202,0.08);
+    border: 1px solid rgba(134,239,202,0.15);
+    border-radius: 100px;
+    padding: 5px 12px;
+  }
+
+  .day-chip-text {
+    font-size: 11px;
+    color: var(--mint);
+    font-weight: 500;
+  }
+
+  /* SENSOR STRIP */
+  .sensor-strip {
+    margin: 14px 0 0;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .sensor-strip::-webkit-scrollbar { display: none; }
+
+  .sensor-pill {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 70px;
+    transition: border-color 0.3s;
+  }
+
+  .sensor-pill:hover {
+    border-color: rgba(196,181,253,0.2);
+  }
+
+  .sensor-pill-label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .sensor-pill-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .sensor-pill-unit {
+    font-size: 9px;
+    color: var(--text-dimmer);
+  }
+
+  /* VITALS */
+  .section {
+    padding: 16px 20px 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .section-action {
+    font-size: 11px;
+    color: var(--lavender);
+    opacity: 0.7;
+    cursor: pointer;
+  }
+
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .vital-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vital-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0 0 20px 20px;
+    opacity: 0.6;
+  }
+
+  .vital-card.rose::after { background: linear-gradient(90deg, transparent, var(--rose), transparent); }
+  .vital-card.lav::after { background: linear-gradient(90deg, transparent, var(--lavender), transparent); }
+  .vital-card.peach::after { background: linear-gradient(90deg, transparent, var(--peach), transparent); }
+  .vital-card.mint::after { background: linear-gradient(90deg, transparent, var(--mint), transparent); }
+
+  .vital-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .vital-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .vital-card.rose .vital-number { color: var(--rose); }
+  .vital-card.lav .vital-number { color: var(--lavender); }
+  .vital-card.peach .vital-number { color: var(--peach); }
+  .vital-card.mint .vital-number { color: var(--mint); }
+
+  .vital-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .vital-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+  }
+
+  .vital-card.rose .vital-bar-fill { background: linear-gradient(90deg, rgba(244,160,181,0.4), var(--rose)); }
+  .vital-card.lav .vital-bar-fill { background: linear-gradient(90deg, rgba(196,181,253,0.4), var(--lavender)); }
+  .vital-card.peach .vital-bar-fill { background: linear-gradient(90deg, rgba(251,191,138,0.4), var(--peach)); }
+  .vital-card.mint .vital-bar-fill { background: linear-gradient(90deg, rgba(134,239,202,0.4), var(--mint)); }
+
+  /* LATEST POST */
+  .post-section {
+    padding: 16px 20px;
+  }
+
+  .post-bubble {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 24px;
+    border-top-left-radius: 6px;
+    padding: 16px 18px;
+    position: relative;
+  }
+
+  .post-bubble::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(244,160,181,0.2), rgba(196,181,253,0.2), transparent);
+  }
+
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .post-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lavender), var(--rose));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .post-handle {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .post-handle span {
+    color: var(--rose);
+  }
+
+  .post-time {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    margin-left: auto;
+  }
+
+  .post-body {
+    font-family: 'Instrument Serif', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .post-body em {
+    font-style: normal;
+    color: var(--rose);
+  }
+
+  .post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .post-tag {
+    font-size: 10px;
+    color: var(--lavender);
+    opacity: 0.6;
+  }
+
+  .share-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, rgba(196,181,253,0.12), rgba(244,160,181,0.08));
+    border: 1px solid rgba(196,181,253,0.2);
+    border-radius: 100px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .share-btn:hover {
+    border-color: rgba(196,181,253,0.4);
+    background: rgba(196,181,253,0.15);
+  }
+
+  .share-btn-text {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--lavender);
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 16px 20px 32px;
+    border-top: 1px solid var(--border-soft);
+    background: linear-gradient(to bottom, transparent, rgba(18,16,26,0.8));
+  }
+
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+
+  .nav-btn.active {
+    opacity: 1;
+  }
+
+  .nav-icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-btn.active .nav-icon-wrap {
+    background: linear-gradient(135deg, rgba(196,181,253,0.12), rgba(244,160,181,0.08));
+    border: 1px solid rgba(196,181,253,0.2);
+  }
+
+  .nav-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .nav-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .nav-btn.active .nav-label {
+    color: var(--lavender);
+  }
+
+  /* HOME INDICATOR */
+  .home-indicator {
+    width: 120px;
+    height: 5px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 100px;
+    margin: -20px auto 16px;
+  }
+
+  /* PAGE LABEL */
+  .page-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
+  }
+
+  /* ANIMATIONS */
+  @keyframes pet-float {
+    0%, 100% { transform: translateY(0px) rotate(-1deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+  }
+
+  @keyframes glow-breathe {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="bg-blob blob-1"></div>
+<div class="bg-blob blob-2"></div>
+<div class="bg-blob blob-3"></div>
+
+<p class="page-label">— soft ui concept —</p>
+
+<div class="phone">
+
+  <!-- DYNAMIC ISLAND -->
+  <div class="dynamic-island">
+    <div class="island-dot"></div>
+    <div class="island-cam"></div>
+    <div class="island-dot"></div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-icons">
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+        <rect x="0" y="4" width="3" height="7" rx="1" fill="rgba(232,224,240,0.4)"/>
+        <rect x="4" y="2.5" width="3" height="8.5" rx="1" fill="rgba(232,224,240,0.4)"/>
+        <rect x="8" y="1" width="3" height="10" rx="1" fill="rgba(232,224,240,0.4)"/>
+        <rect x="12" y="0" width="3" height="11" rx="1" fill="rgba(232,224,240,0.7)"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 2.5C10.5 2.5 12.7 3.7 14.1 5.5L15.5 4C13.7 1.9 11 0.5 8 0.5C5 0.5 2.3 1.9 0.5 4L1.9 5.5C3.3 3.7 5.5 2.5 8 2.5Z" fill="rgba(232,224,240,0.4)"/>
+        <path d="M8 5.5C9.7 5.5 11.2 6.3 12.2 7.5L13.6 6C12.2 4.4 10.2 3.5 8 3.5C5.8 3.5 3.8 4.4 2.4 6L3.8 7.5C4.8 6.3 6.3 5.5 8 5.5Z" fill="rgba(232,224,240,0.5)"/>
+        <circle cx="8" cy="10" r="1.5" fill="rgba(232,224,240,0.8)"/>
+      </svg>
+      <div class="status-bar-dot"></div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-greeting">Day 47 · Adult Era</div>
+    <div class="hero-name">good evening, <em>Mochi</em><br>is waiting for you</div>
+    <div class="era-tag">
+      <div class="era-dot"></div>
+      <span class="era-text">Chaotic Good · Mood: 88</span>
+    </div>
+  </div>
+
+  <!-- PET CARD -->
+  <div class="pet-card" style="margin-top: 16px; margin-left: 20px; margin-right: 20px;">
+
+    <div class="day-chip">
+      <div class="day-chip-text">6,240 steps ↑</div>
+    </div>
+
+    <div class="mood-chip">
+      <div class="mood-chip-text">✦ thriving</div>
+    </div>
+
+    <div class="pet-stage">
+      <div class="pet-glow"></div>
+      <!-- Soft rounded SVG pet -->
+      <svg class="pet-svg" width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <ellipse cx="60" cy="90" rx="38" ry="40" fill="url(#bodyGrad)"/>
+        <!-- Head -->
+        <ellipse cx="60" cy="52" rx="34" ry="32" fill="url(#headGrad)"/>
+        <!-- Ears -->
+        <ellipse cx="32" cy="28" rx="11" ry="14" fill="url(#headGrad)" transform="rotate(-15 32 28)"/>
+        <ellipse cx="88" cy="28" rx="11" ry="14" fill="url(#headGrad)" transform="rotate(15 88 28)"/>
+        <!-- Ear inner -->
+        <ellipse cx="32" cy="29" rx="6" ry="9" fill="url(#earInner)" transform="rotate(-15 32 29)"/>
+        <ellipse cx="88" cy="29" rx="6" ry="9" fill="url(#earInner)" transform="rotate(15 88 29)"/>
+        <!-- Eyes -->
+        <ellipse cx="46" cy="50" rx="7" ry="8" fill="white"/>
+        <ellipse cx="74" cy="50" rx="7" ry="8" fill="white"/>
+        <ellipse cx="47" cy="51" rx="4.5" ry="5" fill="#2a1f3d"/>
+        <ellipse cx="75" cy="51" rx="4.5" ry="5" fill="#2a1f3d"/>
+        <!-- Eye shine -->
+        <ellipse cx="49" cy="49" rx="1.5" ry="1.5" fill="white" opacity="0.9"/>
+        <ellipse cx="77" cy="49" rx="1.5" ry="1.5" fill="white" opacity="0.9"/>
+        <!-- Nose -->
+        <ellipse cx="60" cy="60" rx="3.5" ry="2.5" fill="#f4a0b5" opacity="0.8"/>
+        <!-- Mouth -->
+        <path d="M53 65 Q60 71 67 65" stroke="#f4a0b5" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        <!-- Blush -->
+        <ellipse cx="38" cy="59" rx="7" ry="4" fill="#f4a0b5" opacity="0.2"/>
+        <ellipse cx="82" cy="59" rx="7" ry="4" fill="#f4a0b5" opacity="0.2"/>
+        <!-- Belly -->
+        <ellipse cx="60" cy="95" rx="22" ry="24" fill="url(#bellyGrad)" opacity="0.5"/>
+        <!-- Arms -->
+        <ellipse cx="24" cy="92" rx="9" ry="13" fill="url(#headGrad)" transform="rotate(-20 24 92)"/>
+        <ellipse cx="96" cy="92" rx="9" ry="13" fill="url(#headGrad)" transform="rotate(20 96 92)"/>
+        <!-- Feet -->
+        <ellipse cx="44" cy="128" rx="13" ry="9" fill="url(#headGrad)"/>
+        <ellipse cx="76" cy="128" rx="13" ry="9" fill="url(#headGrad)"/>
+        <!-- Toe lines -->
+        <path d="M36 128 Q38 122 40 128" stroke="rgba(196,181,253,0.4)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M44 126 Q44 120 44 126" stroke="rgba(196,181,253,0.4)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M52 128 Q50 122 48 128" stroke="rgba(196,181,253,0.4)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <!-- Tail -->
+        <path d="M96 110 Q114 100 108 84 Q102 70 96 78" stroke="url(#tailGrad)" stroke-width="8" stroke-linecap="round" fill="none"/>
+
+        <defs>
+          <radialGradient id="bodyGrad" cx="40%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#d4bbff"/>
+            <stop offset="100%" stop-color="#9b6fd4"/>
+          </radialGradient>
+          <radialGradient id="headGrad" cx="40%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#dcc5ff"/>
+            <stop offset="100%" stop-color="#b08be0"/>
+          </radialGradient>
+          <radialGradient id="earInner" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f4a0b5" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#e879a8" stop-opacity="0.3"/>
+          </radialGradient>
+          <radialGradient id="bellyGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="white" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="tailGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#b08be0"/>
+            <stop offset="100%" stop-color="#9b6fd4" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- SENSOR PILLS -->
+    <div class="sensor-strip">
+      <div class="sensor-pill">
+        <div class="sensor-pill-label">Steps</div>
+        <div class="sensor-pill-val" style="color: var(--mint);">6.2k</div>
+        <div class="sensor-pill-unit">today</div>
+      </div>
+      <div class="sensor-pill">
+        <div class="sensor-pill-label">Battery</div>
+        <div class="sensor-pill-val" style="color: var(--peach);">78%</div>
+        <div class="sensor-pill-unit">charging</div>
+      </div>
+      <div class="sensor-pill">
+        <div class="sensor-pill-label">Light</div>
+        <div class="sensor-pill-val" style="color: var(--lavender);">dim</div>
+        <div class="sensor-pill-unit">320 lux</div>
+      </div>
+      <div class="sensor-pill">
+        <div class="sensor-pill-label">Away</div>
+        <div class="sensor-pill-val" style="color: var(--rose);">3h</div>
+        <div class="sensor-pill-unit">missed you</div>
+      </div>
+      <div class="sensor-pill">
+        <div class="sensor-pill-label">Weather</div>
+        <div class="sensor-pill-val">☁</div>
+        <div class="sensor-pill-unit">cloudy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VITALS GRID -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Vitals</div>
+      <div class="section-action">history →</div>
+    </div>
+    <div class="vitals-grid">
+      <div class="vital-card rose">
+        <div class="vital-name">Hunger</div>
+        <div class="vital-number">45</div>
+        <div class="vital-bar"><div class="vital-bar-fill" style="width: 45%;"></div></div>
+      </div>
+      <div class="vital-card lav">
+        <div class="vital-name">Energy</div>
+        <div class="vital-number">72</div>
+        <div class="vital-bar"><div class="vital-bar-fill" style="width: 72%;"></div></div>
+      </div>
+      <div class="vital-card peach">
+        <div class="vital-name">Mood</div>
+        <div class="vital-number">88</div>
+        <div class="vital-bar"><div class="vital-bar-fill" style="width: 88%;"></div></div>
+      </div>
+      <div class="vital-card mint">
+        <div class="vital-name">Alertness</div>
+        <div class="vital-number">60</div>
+        <div class="vital-bar"><div class="vital-bar-fill" style="width: 60%;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LATEST POST -->
+  <div class="post-section">
+    <div class="section-header">
+      <div class="section-title">Latest Post</div>
+      <div class="section-action">see feed →</div>
+    </div>
+    <div class="post-bubble">
+      <div class="post-author">
+        <div class="post-avatar">🐾</div>
+        <div class="post-handle"><span>@mochi.exe</span></div>
+        <div class="post-time">2h ago</div>
+      </div>
+      <div class="post-body">
+        ok so my human opened me at <em>1:47am</em>. again. third time this week. also <em>2,300 steps</em> today. i have concerns and i will be writing about them.
+      </div>
+      <div class="post-footer">
+        <div class="post-tags">
+          <span class="post-tag">#humanwatch</span>
+          <span class="post-tag">#concerned</span>
+        </div>
+        <div class="share-btn">
+          <span class="share-btn-text">Share story</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-btn active">
+      <div class="nav-icon-wrap">
+        <div class="nav-icon">🏠</div>
+      </div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-btn">
+      <div class="nav-icon-wrap">
+        <div class="nav-icon">📜</div>
+      </div>
+      <div class="nav-label">Feed</div>
+    </div>
+    <div class="nav-btn">
+      <div class="nav-icon-wrap">
+        <div class="nav-icon">✦</div>
+      </div>
+      <div class="nav-label">Share</div>
+    </div>
+    <div class="nav-btn">
+      <div class="nav-icon-wrap">
+        <div class="nav-icon">📊</div>
+      </div>
+      <div class="nav-label">Stats</div>
+    </div>
+  </div>
+
+  <div class="home-indicator"></div>
+
+</div>
+
+<p class="page-label" style="margin-top: 24px;">— soft dark · glassmorphism —</p>
+
+</body>
+</html>
