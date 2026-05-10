@@ -14,7 +14,13 @@ class PetViewport extends StatelessWidget {
     if (Theme.of(context).extension<MochiExtras>() != null) {
       return _MochiViewport();
     }
-    return _ClassicViewport();
+    if (Theme.of(context).extension<ForestExtras>() != null) {
+      return _ForestViewport();
+    }
+    if (Theme.of(context).extension<SunsetExtras>() != null) {
+      return _SunsetViewport();
+    }
+    return _PaperViewport();
   }
 }
 
@@ -67,15 +73,66 @@ class _MochiViewport extends StatelessWidget {
   }
 }
 
-class _ClassicViewport extends StatelessWidget {
+class _ForestViewport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(32),
+        color: colors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(24),
+        child: SoftCharacterPet(),
+      ),
+    );
+  }
+}
+
+class _SunsetViewport extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: colors.primary, width: 2),
+        color: colors.surface,
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(16),
+        child: PixelGridPet(),
+      ),
+    );
+  }
+}
+
+class _PaperViewport extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
         color: colors.surfaceContainerHighest,
+        border: Border.all(color: colors.primary.withValues(alpha: 0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 2,
+            offset: const Offset(2, 2),
+          )
+        ],
       ),
       alignment: Alignment.center,
       child: const Padding(

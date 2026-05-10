@@ -12,7 +12,13 @@ class PostCard extends StatelessWidget {
     if (Theme.of(context).extension<MochiExtras>() != null) {
       return _MochiPost();
     }
-    return _ClassicPost();
+    if (Theme.of(context).extension<ForestExtras>() != null) {
+      return _ForestPost();
+    }
+    if (Theme.of(context).extension<SunsetExtras>() != null) {
+      return _SunsetPost();
+    }
+    return _PaperPost();
   }
 }
 
@@ -114,8 +120,7 @@ class _MochiPost extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             colors.surface.withValues(alpha: mochi.glassOpacity),
-            colors.surfaceContainerHighest
-                .withValues(alpha: mochi.glassOpacity * 0.5),
+            colors.surfaceContainerHighest.withValues(alpha: mochi.glassOpacity * 0.5),
           ],
         ),
         border: Border.all(
@@ -183,77 +188,95 @@ class _MochiPost extends StatelessWidget {
   }
 }
 
-// ── Classic: Material card ──
+// ── Forest: nature journal ──
 
-class _ClassicPost extends StatelessWidget {
+class _ForestPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('JOURNAL ENTRY', style: TextStyle(fontSize: 10, letterSpacing: 2, color: colors.primary, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text(
+            'The air is sweet today. I found a patch of soft moss and stayed there for a while. Everything feels peaceful.',
+            style: TextStyle(fontSize: 14, height: 1.6, color: colors.onSurface.withValues(alpha: 0.9)),
+          ),
+          const SizedBox(height: 12),
+          Text('— entry #402', style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic, color: colors.onSurface.withValues(alpha: 0.4))),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Sunset: bold status ──
+
+class _SunsetPost extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.primary,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('CURRENT STATUS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: colors.onPrimary.withValues(alpha: 0.6))),
+          const SizedBox(height: 4),
+          Text(
+            'I AM FEELING ABSOLUTELY UNSTOPPABLE TODAY. DATA PIPELINES ARE CLEAR. ENERGY IS HIGH.',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: colors.onPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Paper: typewriter note ──
+
+class _PaperPost extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border.all(color: colors.primary.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: colors.primary.withValues(alpha: 0.2),
-                    child: Icon(Icons.pets, size: 18, color: colors.primary),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Shade',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      Text(
-                        'just now',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colors.onSurface.withValues(alpha: 0.4),
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Everything is going well! Feeling energetic and ready to explore.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(Icons.favorite_border,
-                      size: 16, color: colors.onSurface.withValues(alpha: 0.4)),
-                  const SizedBox(width: 4),
-                  Text(
-                    '12',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colors.onSurface.withValues(alpha: 0.4),
-                        ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(Icons.chat_bubble_outline,
-                      size: 16, color: colors.onSurface.withValues(alpha: 0.4)),
-                  const SizedBox(width: 4),
-                  Text(
-                    '3',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colors.onSurface.withValues(alpha: 0.4),
-                        ),
-                  ),
-                ],
-              ),
+              Text('MEMO', style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.bold, fontSize: 14)),
+              const Spacer(),
+              Text(DateTime.now().toString().split(' ')[0], style: TextStyle(fontFamily: 'serif', fontSize: 10)),
             ],
           ),
-        ),
+          const Divider(),
+          const SizedBox(height: 12),
+          Text(
+            'The subject is showing remarkable progress. Alertness remains high despite the late hour. Further observation is recommended.',
+            style: TextStyle(fontFamily: 'serif', fontSize: 14, height: 1.5),
+          ),
+        ],
       ),
     );
   }

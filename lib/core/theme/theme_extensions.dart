@@ -159,3 +159,161 @@ class MochiExtras extends ThemeExtension<MochiExtras> {
         glassHighlightColor,
       );
 }
+
+// ──────────────────────────────────────────────
+// Forest Extras
+// ──────────────────────────────────────────────
+
+class ForestExtras extends ThemeExtension<ForestExtras> {
+  final Color leafAccent;
+  final Color mossColor;
+  final double organicBorderRadius;
+
+  const ForestExtras({
+    required this.leafAccent,
+    required this.mossColor,
+    required this.organicBorderRadius,
+  });
+
+  @override
+  ForestExtras copyWith({
+    Color? leafAccent,
+    Color? mossColor,
+    double? organicBorderRadius,
+  }) {
+    return ForestExtras(
+      leafAccent: leafAccent ?? this.leafAccent,
+      mossColor: mossColor ?? this.mossColor,
+      organicBorderRadius: organicBorderRadius ?? this.organicBorderRadius,
+    );
+  }
+
+  @override
+  ForestExtras lerp(ThemeExtension<ForestExtras>? other, double t) {
+    if (other is! ForestExtras) return this;
+    return ForestExtras(
+      leafAccent: Color.lerp(leafAccent, other.leafAccent, t)!,
+      mossColor: Color.lerp(mossColor, other.mossColor, t)!,
+      organicBorderRadius:
+          lerpDouble(organicBorderRadius, other.organicBorderRadius, t)!,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ForestExtras &&
+          leafAccent == other.leafAccent &&
+          mossColor == other.mossColor &&
+          organicBorderRadius == other.organicBorderRadius);
+
+  @override
+  int get hashCode => Object.hash(leafAccent, mossColor, organicBorderRadius);
+}
+
+// ──────────────────────────────────────────────
+// Sunset Extras
+// ──────────────────────────────────────────────
+
+class SunsetExtras extends ThemeExtension<SunsetExtras> {
+  final Color emberColor;
+  final Color flameColor;
+  final double sharpRadius;
+
+  const SunsetExtras({
+    required this.emberColor,
+    required this.flameColor,
+    required this.sharpRadius,
+  });
+
+  @override
+  SunsetExtras copyWith({
+    Color? emberColor,
+    Color? flameColor,
+    double? sharpRadius,
+  }) {
+    return SunsetExtras(
+      emberColor: emberColor ?? this.emberColor,
+      flameColor: flameColor ?? this.flameColor,
+      sharpRadius: sharpRadius ?? this.sharpRadius,
+    );
+  }
+
+  @override
+  SunsetExtras lerp(ThemeExtension<SunsetExtras>? other, double t) {
+    if (other is! SunsetExtras) return this;
+    return SunsetExtras(
+      emberColor: Color.lerp(emberColor, other.emberColor, t)!,
+      flameColor: Color.lerp(flameColor, other.flameColor, t)!,
+      sharpRadius: lerpDouble(sharpRadius, other.sharpRadius, t)!,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SunsetExtras &&
+          emberColor == other.emberColor &&
+          flameColor == other.flameColor &&
+          sharpRadius == other.sharpRadius);
+
+  @override
+  int get hashCode => Object.hash(emberColor, flameColor, sharpRadius);
+}
+
+// ──────────────────────────────────────────────
+// Paper Extras
+// ──────────────────────────────────────────────
+
+class PaperExtras extends ThemeExtension<PaperExtras> {
+  final Color inkColor;
+  final Color parchmentColor;
+  final Color siennaAccent;
+  final double pageMargin;
+
+  const PaperExtras({
+    required this.inkColor,
+    required this.parchmentColor,
+    required this.siennaAccent,
+    required this.pageMargin,
+  });
+
+  @override
+  PaperExtras copyWith({
+    Color? inkColor,
+    Color? parchmentColor,
+    Color? siennaAccent,
+    double? pageMargin,
+  }) {
+    return PaperExtras(
+      inkColor: inkColor ?? this.inkColor,
+      parchmentColor: parchmentColor ?? this.parchmentColor,
+      siennaAccent: siennaAccent ?? this.siennaAccent,
+      pageMargin: pageMargin ?? this.pageMargin,
+    );
+  }
+
+  @override
+  PaperExtras lerp(ThemeExtension<PaperExtras>? other, double t) {
+    if (other is! PaperExtras) return this;
+    return PaperExtras(
+      inkColor: Color.lerp(inkColor, other.inkColor, t)!,
+      parchmentColor: Color.lerp(parchmentColor, other.parchmentColor, t)!,
+      siennaAccent: Color.lerp(siennaAccent, other.siennaAccent, t)!,
+      pageMargin: lerpDouble(pageMargin, other.pageMargin, t)!,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PaperExtras &&
+          inkColor == other.inkColor &&
+          parchmentColor == other.parchmentColor &&
+          siennaAccent == other.siennaAccent &&
+          pageMargin == other.pageMargin);
+
+  @override
+  int get hashCode =>
+      Object.hash(inkColor, parchmentColor, siennaAccent, pageMargin);
+}

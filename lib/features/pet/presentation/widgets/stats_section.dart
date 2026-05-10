@@ -20,25 +20,25 @@ final _statDefs = [
   _StatDef(
     label: 'FULLNESS',
     icon: Icons.restaurant,
-    color: Color(0xFF00ff88),
+    color: const Color(0xFF00ff88),
     getValue: _fullness,
   ),
   _StatDef(
     label: 'ENERGY',
     icon: Icons.bolt,
-    color: Color(0xFF00ffee),
+    color: const Color(0xFF00ffee),
     getValue: (p) => p.energy,
   ),
   _StatDef(
     label: 'MOOD',
     icon: Icons.favorite,
-    color: Color(0xFFff2d78),
+    color: const Color(0xFFff2d78),
     getValue: (p) => p.mood,
   ),
   _StatDef(
     label: 'FOCUS',
     icon: Icons.visibility,
-    color: Color(0xFFffee00),
+    color: const Color(0xFFffee00),
     getValue: (p) => p.alertness,
   ),
 ];
@@ -57,7 +57,13 @@ class StatsSection extends StatelessWidget {
     if (Theme.of(context).extension<MochiExtras>() != null) {
       return _MochiStats(petState: petState);
     }
-    return _ClassicStats(petState: petState);
+    if (Theme.of(context).extension<ForestExtras>() != null) {
+      return _ForestStats(petState: petState);
+    }
+    if (Theme.of(context).extension<SunsetExtras>() != null) {
+      return _SunsetStats(petState: petState);
+    }
+    return _PaperStats(petState: petState);
   }
 }
 
@@ -233,8 +239,7 @@ class _MochiStatCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             colors.surface.withValues(alpha: mochi.glassOpacity),
-            colors.surfaceContainerHighest
-                .withValues(alpha: mochi.glassOpacity * 0.5),
+            colors.surfaceContainerHighest.withValues(alpha: mochi.glassOpacity * 0.5),
           ],
         ),
         border: Border.all(
@@ -291,75 +296,120 @@ class _MochiStatCard extends StatelessWidget {
   }
 }
 
-// ── Classic: Material style ──
+// ── Forest: organic circles ──
 
-class _ClassicStats extends StatelessWidget {
+class _ForestStats extends StatelessWidget {
   final PetEntity petState;
-  const _ClassicStats({required this.petState});
+  const _ForestStats({required this.petState});
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 100,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: _statDefs.map((stat) {
+          final value = stat.getValue(petState);
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CircularProgressIndicator(
+                      value: value / 100,
+                      strokeWidth: 6,
+                      color: colors.primary,
+                      backgroundColor: colors.primary.withValues(alpha: 0.1),
+                    ),
+                    Center(child: Icon(stat.icon, size: 16, color: colors.primary)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(stat.label.substring(0, 3), style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+              Text('$value%', style: const TextStyle(fontSize: 11)),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ── Sunset: bold blocks ──
+
+class _SunsetStats extends StatelessWidget {
+  final PetEntity petState;
+  const _SunsetStats({required this.petState});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          for (final stat in _statDefs)
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: colors.surfaceContainerHighest,
+                  border: Border(bottom: BorderSide(color: stat.color, width: 4)),
+                ),
+                child: Column(
+                  children: [
+                    Icon(stat.icon, size: 16, color: stat.color),
+                    const SizedBox(height: 4),
+                    Text('${stat.getValue(petState)}%', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Paper: elegant typography ──
+
+class _PaperStats extends StatelessWidget {
+  final PetEntity petState;
+  const _PaperStats({required this.petState});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: colors.primary.withValues(alpha: 0.1)),
+      ),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: Text(
-              'Pet Stats',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: colors.onSurface.withValues(alpha: 0.5),
-                  ),
-            ),
-          ),
-          for (final stat in _statDefs) ...[
+          Text('CHARACTER STATUS', style: Theme.of(context).textTheme.titleLarge),
+          const Divider(),
+          for (final stat in _statDefs)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 children: [
-                  Icon(stat.icon, size: 16, color: stat.color),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 64,
-                    child: Text(
-                      stat.label,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween(
-                        begin: 0,
-                        end: stat.getValue(petState) / 100,
-                      ),
-                      duration: const Duration(milliseconds: 1000),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, anim, _) {
-                        return LinearProgressIndicator(
-                          value: anim,
-                          backgroundColor:
-                              colors.surfaceContainerHighest,
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 32,
-                    child: Text(
-                      '${stat.getValue(petState)}%',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colors.onSurface.withValues(alpha: 0.5),
-                          ),
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
+                  Text(stat.label, style: const TextStyle(fontFamily: 'serif', fontSize: 12)),
+                  const Spacer(),
+                  Text('${stat.getValue(petState)}%', style: const TextStyle(fontFamily: 'serif', fontStyle: FontStyle.italic, fontSize: 12)),
                 ],
               ),
             ),
-          ],
         ],
       ),
     );

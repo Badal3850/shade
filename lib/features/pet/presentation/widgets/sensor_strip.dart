@@ -14,7 +14,13 @@ class SensorStrip extends StatelessWidget {
     if (Theme.of(context).extension<MochiExtras>() != null) {
       return _MochiSensors(sensorReading: sensorReading);
     }
-    return _ClassicSensors(sensorReading: sensorReading);
+    if (Theme.of(context).extension<ForestExtras>() != null) {
+      return _ForestSensors(sensorReading: sensorReading);
+    }
+    if (Theme.of(context).extension<SunsetExtras>() != null) {
+      return _SunsetSensors(sensorReading: sensorReading);
+    }
+    return _PaperSensors(sensorReading: sensorReading);
   }
 }
 
@@ -35,23 +41,17 @@ List<_SensorItem> _buildSensorItems(SensorReading reading) {
   return [
     _SensorItem(
       label: 'LIGHT',
-      value: reading.lightLevel != null
-          ? '${reading.lightLevel!.toInt()} lux'
-          : '--',
+      value: reading.lightLevel != null ? '${reading.lightLevel!.toInt()} lux' : '--',
       icon: Icons.light_mode,
     ),
     _SensorItem(
       label: 'BATTERY',
-      value: reading.batteryLevel != null
-          ? '${reading.batteryLevel}%'
-          : '--',
+      value: reading.batteryLevel != null ? '${reading.batteryLevel}%' : '--',
       icon: Icons.battery_std,
     ),
     _SensorItem(
       label: 'STEPS',
-      value: reading.stepCount != null
-          ? '${reading.stepCount}'
-          : '--',
+      value: reading.stepCount != null ? '${reading.stepCount}' : '--',
       icon: Icons.directions_walk,
     ),
   ];
@@ -129,15 +129,12 @@ class _MochiSensors extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    colors.surface
-                        .withValues(alpha: mochi.glassOpacity * 1.2),
-                    colors.surfaceContainerHighest
-                        .withValues(alpha: mochi.glassOpacity * 0.6),
+                    colors.surface.withValues(alpha: mochi.glassOpacity * 1.2),
+                    colors.surfaceContainerHighest.withValues(alpha: mochi.glassOpacity * 0.6),
                   ],
                 ),
                 border: Border.all(
-                  color:
-                      colors.outline.withValues(alpha: mochi.glassBorderOpacity),
+                  color: colors.outline.withValues(alpha: mochi.glassBorderOpacity),
                 ),
               ),
               child: Row(
@@ -163,34 +160,102 @@ class _MochiSensors extends StatelessWidget {
   }
 }
 
-// ── Classic: Material chips ──
+// ── Forest: organic chips ──
 
-class _ClassicSensors extends StatelessWidget {
+class _ForestSensors extends StatelessWidget {
   final SensorReading sensorReading;
-  const _ClassicSensors({required this.sensorReading});
+  const _ForestSensors({required this.sensorReading});
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final items = _buildSensorItems(sensorReading);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: items.map((item) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Chip(
-                avatar: Icon(item.icon, size: 16),
-                label: Text(
-                  '${item.label} ${item.value ?? '--'}',
-                  style: Theme.of(context).textTheme.bodySmall,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: colors.tertiary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(item.icon, size: 12, color: colors.primary),
+                const SizedBox(width: 4),
+                Text(
+                  item.value ?? '--',
+                  style: TextStyle(fontSize: 10, color: colors.onSurface, fontWeight: FontWeight.bold),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ── Sunset: bold data blocks ──
+
+class _SunsetSensors extends StatelessWidget {
+  final SensorReading sensorReading;
+  const _SunsetSensors({required this.sensorReading});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final items = _buildSensorItems(sensorReading);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: colors.primary.withValues(alpha: 0.1),
+        border: Border(left: BorderSide(color: colors.primary, width: 4)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(item.label, style: TextStyle(fontSize: 8, color: colors.onSurface.withValues(alpha: 0.5))),
+              Text(item.value ?? '--', style: TextStyle(fontSize: 12, color: colors.primary, fontWeight: FontWeight.bold)),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ── Paper: subtle text list ──
+
+class _PaperSensors extends StatelessWidget {
+  final SensorReading sensorReading;
+  const _PaperSensors({required this.sensorReading});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final items = _buildSensorItems(sensorReading);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: colors.primary.withValues(alpha: 0.1))),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) {
+          return Text(
+            '${item.label}: ${item.value ?? '--'}',
+            style: TextStyle(fontSize: 10, fontFamily: 'serif', fontStyle: FontStyle.italic, color: colors.onSurface.withValues(alpha: 0.6)),
+          );
+        }).toList(),
       ),
     );
   }

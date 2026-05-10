@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'styles/classic_theme.dart';
+import 'styles/paper_theme.dart';
 import 'styles/mochi_theme.dart';
 import 'styles/petl_theme.dart';
+import 'styles/forest_theme.dart';
+import 'styles/sunset_theme.dart';
 
 class ThemeManager extends ChangeNotifier {
   static const _styleKey = 'theme_style';
@@ -11,7 +13,7 @@ class ThemeManager extends ChangeNotifier {
 
   final SharedPreferences? _prefs;
 
-  ThemeStyle _currentStyle = ThemeStyle.classic;
+  ThemeStyle _currentStyle = ThemeStyle.paper;
   ThemeMode _currentMode = ThemeMode.system;
 
   ThemeManager([this._prefs]);
@@ -24,15 +26,21 @@ class ThemeManager extends ChangeNotifier {
 
   ThemeData _resolve(Brightness brightness) {
     return switch (_currentStyle) {
-      ThemeStyle.classic => brightness == Brightness.light
-          ? ClassicTheme.light
-          : ClassicTheme.dark,
+      ThemeStyle.paper => brightness == Brightness.light
+          ? PaperTheme.light
+          : PaperTheme.dark,
       ThemeStyle.petlExe => brightness == Brightness.light
           ? PetlTheme.light
           : PetlTheme.dark,
       ThemeStyle.mochi => brightness == Brightness.light
           ? MochiTheme.light
           : MochiTheme.dark,
+      ThemeStyle.forest => brightness == Brightness.light
+          ? ForestTheme.light
+          : ForestTheme.dark,
+      ThemeStyle.sunset => brightness == Brightness.light
+          ? SunsetTheme.light
+          : SunsetTheme.dark,
     };
   }
 
@@ -42,7 +50,7 @@ class ThemeManager extends ChangeNotifier {
     if (styleStr != null) {
       _currentStyle = ThemeStyle.values.firstWhere(
         (e) => e.name == styleStr,
-        orElse: () => ThemeStyle.classic,
+        orElse: () => ThemeStyle.paper,
       );
     }
     final modeIndex = _prefs.getInt(_modeKey);
@@ -67,9 +75,11 @@ class ThemeManager extends ChangeNotifier {
 }
 
 enum ThemeStyle {
-  classic('Classic'),
+  paper('Paper'),
   petlExe('PETL.EXE'),
-  mochi('Mochi');
+  mochi('Mochi'),
+  forest('Forest'),
+  sunset('Sunset');
 
   final String label;
   const ThemeStyle(this.label);

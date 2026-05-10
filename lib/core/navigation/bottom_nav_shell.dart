@@ -3,6 +3,8 @@ import 'package:shade/core/theme/theme_extensions.dart';
 import 'package:shade/core/theme/theme_manager.dart';
 import 'package:shade/features/pet/presentation/screens/pet_home_screen.dart';
 
+import 'package:shade/features/pet/presentation/screens/shade_picker_screen.dart';
+
 class BottomNavShell extends StatefulWidget {
   const BottomNavShell({super.key});
 
@@ -18,6 +20,7 @@ class _BottomNavShellState extends State<BottomNavShell> {
     _PlaceholderTab(label: 'Feed', icon: Icons.list_alt),
     _PlaceholderTab(label: 'Share', icon: Icons.share),
     _PlaceholderTab(label: 'Stats', icon: Icons.bar_chart),
+    ShadePickerScreen(),
   ];
 
   @override
@@ -30,33 +33,28 @@ class _BottomNavShellState extends State<BottomNavShell> {
   }
 
   ThemeStyle _resolveTheme(BuildContext context) {
-    if (Theme.of(context).extension<PetlExtras>() != null) {
-      return ThemeStyle.petlExe;
-    }
-    if (Theme.of(context).extension<MochiExtras>() != null) {
-      return ThemeStyle.mochi;
-    }
-    return ThemeStyle.classic;
+    if (Theme.of(context).extension<PetlExtras>() != null) return ThemeStyle.petlExe;
+    if (Theme.of(context).extension<MochiExtras>() != null) return ThemeStyle.mochi;
+    if (Theme.of(context).extension<ForestExtras>() != null) return ThemeStyle.forest;
+    if (Theme.of(context).extension<SunsetExtras>() != null) return ThemeStyle.sunset;
+    return ThemeStyle.paper;
   }
 
   Widget _buildNav(BuildContext context, ThemeStyle themeStyle) {
-    switch (themeStyle) {
-      case ThemeStyle.petlExe:
-        return _buildPetlNav(context);
-      case ThemeStyle.mochi:
-        return _buildMochiNav(context);
-      case ThemeStyle.classic:
-        return _buildClassicNav(context);
-    }
+    return switch (themeStyle) {
+      ThemeStyle.petlExe => _buildPetlNav(context),
+      ThemeStyle.mochi => _buildMochiNav(context),
+      ThemeStyle.forest => _buildForestNav(context),
+      ThemeStyle.sunset => _buildSunsetNav(context),
+      ThemeStyle.paper => _buildPaperNav(context),
+    };
   }
 
   Widget _buildPetlNav(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: colors.primary.withValues(alpha: 0.15)),
-        ),
+        border: Border(top: BorderSide(color: colors.primary.withValues(alpha: 0.15))),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
       padding: const EdgeInsets.fromLTRB(8, 12, 8, 24),
@@ -67,13 +65,13 @@ class _BottomNavShellState extends State<BottomNavShell> {
           _petlNavItem(context, _pixelFeed, 'FEED', 1),
           _petlNavItem(context, _pixelShare, 'SHARE', 2),
           _petlNavItem(context, _pixelStats, 'STATS', 3),
+          _petlNavItem(context, _pixelShade, 'SHADE', 4),
         ],
       ),
     );
   }
 
-  Widget _petlNavItem(
-      BuildContext context, List<List<bool>> pixels, String label, int index) {
+  Widget _petlNavItem(BuildContext context, List<List<bool>> pixels, String label, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
@@ -88,14 +86,12 @@ class _BottomNavShellState extends State<BottomNavShell> {
             active: active,
           ),
           const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'monospace',
-              fontSize: 5,
-              color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
-            ),
-          ),
+          Text(label,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 5,
+                color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+              )),
         ],
       ),
     );
@@ -105,9 +101,7 @@ class _BottomNavShellState extends State<BottomNavShell> {
     final colors = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: colors.outline.withValues(alpha: 0.5)),
-        ),
+        border: Border(top: BorderSide(color: colors.outline.withValues(alpha: 0.5))),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
       padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
@@ -118,13 +112,13 @@ class _BottomNavShellState extends State<BottomNavShell> {
           _mochiNavItem(context, '📜', 'Feed', 1),
           _mochiNavItem(context, '✦', 'Share', 2),
           _mochiNavItem(context, '📊', 'Stats', 3),
+          _mochiNavItem(context, '🎨', 'Shade', 4),
         ],
       ),
     );
   }
 
-  Widget _mochiNavItem(
-      BuildContext context, String emoji, String label, int index) {
+  Widget _mochiNavItem(BuildContext context, String emoji, String label, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
@@ -138,49 +132,139 @@ class _BottomNavShellState extends State<BottomNavShell> {
             decoration: active
                 ? BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
-                    gradient: LinearGradient(
-                      colors: [
-                        colors.primary.withValues(alpha: 0.12),
-                        colors.secondary.withValues(alpha: 0.08),
-                      ],
-                    ),
-                    border: Border.all(
-                        color: colors.primary.withValues(alpha: 0.2)),
+                    gradient: LinearGradient(colors: [
+                      colors.primary.withValues(alpha: 0.12),
+                      colors.secondary.withValues(alpha: 0.08),
+                    ]),
+                    border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
                   )
                 : null,
             alignment: Alignment.center,
             child: Text(emoji, style: const TextStyle(fontSize: 20)),
           ),
           const SizedBox(height: 5),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.05,
-              color: active
-                  ? colors.primary
-                  : colors.onSurface.withValues(alpha: 0.4),
-            ),
-          ),
+          Text(label,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.05,
+                color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+              )),
         ],
       ),
     );
   }
 
-  Widget _buildClassicNav(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: _currentIndex,
-      onDestinationSelected: (i) => setState(() => _currentIndex = i),
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-        NavigationDestination(icon: Icon(Icons.list_alt_outlined), label: 'Feed'),
-        NavigationDestination(icon: Icon(Icons.share_outlined), label: 'Share'),
-        NavigationDestination(icon: Icon(Icons.bar_chart_outlined), label: 'Stats'),
-      ],
+  Widget _buildForestNav(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10)],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _forestNavItem(context, Icons.eco, 0),
+          _forestNavItem(context, Icons.auto_stories, 1),
+          _forestNavItem(context, Icons.forest, 2),
+          _forestNavItem(context, Icons.insert_chart, 3),
+          _forestNavItem(context, Icons.palette, 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _forestNavItem(BuildContext context, IconData icon, int index) {
+    final colors = Theme.of(context).colorScheme;
+    final active = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: active ? colors.primary.withValues(alpha: 0.15) : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4)),
+      ),
+    );
+  }
+
+  Widget _buildSunsetNav(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      color: colors.surface,
+      height: 70,
+      child: Row(
+        children: [
+          for (int i = 0; i < 5; i++)
+            Expanded(
+              child: InkWell(
+                onTap: () => setState(() => _currentIndex = i),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      [Icons.home, Icons.rss_feed, Icons.flare, Icons.assessment, Icons.brush][i],
+                      color: _currentIndex == i ? colors.primary : colors.onSurface.withValues(alpha: 0.3),
+                    ),
+                    const SizedBox(height: 4),
+                    if (_currentIndex == i)
+                      Container(width: 4, height: 4, decoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle)),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaperNav(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.primary.withValues(alpha: 0.1), width: 2)),
+      ),
+      padding: const EdgeInsets.only(bottom: 24, top: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _paperNavItem(context, 'Home', 0),
+          _paperNavItem(context, 'Feed', 1),
+          _paperNavItem(context, 'Share', 2),
+          _paperNavItem(context, 'Stats', 3),
+          _paperNavItem(context, 'Shade', 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _paperNavItem(BuildContext context, String label, int index) {
+    final colors = Theme.of(context).colorScheme;
+    final active = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = index),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: 'serif',
+          fontSize: 14,
+          fontWeight: active ? FontWeight.bold : FontWeight.normal,
+          fontStyle: active ? FontStyle.italic : FontStyle.normal,
+          color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+          decoration: active ? TextDecoration.underline : null,
+        ),
+      ),
     );
   }
 }
+
 
 class _PlaceholderTab extends StatelessWidget {
   final String label;
@@ -293,4 +377,12 @@ const _pixelStats = [
   [false, true, true, true, true],
   [true, true, true, true, true],
   [true, true, true, true, true],
+];
+
+const _pixelShade = [
+  [false, true, true, true, false],
+  [true, true, false, true, true],
+  [true, false, false, false, true],
+  [true, true, false, true, true],
+  [false, true, true, true, false],
 ];
