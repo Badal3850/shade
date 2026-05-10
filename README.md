@@ -35,4 +35,4 @@ flutter run
 
 ## CI/CD
 
-GitLab CI pipeline builds signed APKs and publishes to GitHub Releases on main branch.
+GitHub Actions builds signed APKs and publishes to GitHub Releases on push to main.
