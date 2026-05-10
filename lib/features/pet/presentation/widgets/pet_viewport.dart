@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shade/core/theme/theme_extensions.dart';
 import 'package:shade/features/pet/presentation/widgets/pixel_grid_pet.dart';
@@ -35,12 +36,53 @@ class _PetlViewport extends StatelessWidget {
         borderRadius: BorderRadius.circular(2),
         color: colors.surface,
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(8),
-        child: PixelGridPet(),
+      child: Stack(
+        children: [
+          const RepaintBoundary(
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: PixelGridPet(),
+            ),
+          ),
+          const Positioned.fill(child: _ScanlineOverlay()),
+        ],
       ),
     );
   }
+}
+
+class _ScanlineOverlay extends StatelessWidget {
+  const _ScanlineOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: CustomPaint(
+        painter: _ScanlinePainter(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScanlinePainter extends CustomPainter {
+  final Color color;
+  _ScanlinePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+    
+    for (double i = 0; i < size.height; i += 3) {
+      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _MochiViewport extends StatelessWidget {
@@ -50,24 +92,34 @@ class _MochiViewport extends StatelessWidget {
     final mochi = Theme.of(context).extension<MochiExtras>()!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colors.surface.withValues(alpha: mochi.glassOpacity),
-            colors.surfaceContainerHighest
-                .withValues(alpha: mochi.glassOpacity * 0.5),
-          ],
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colors.surface.withValues(alpha: mochi.glassOpacity),
+                  colors.surfaceContainerHighest
+                      .withValues(alpha: mochi.glassOpacity * 0.5),
+                ],
+              ),
+              border: Border.all(
+                color: colors.outline.withValues(alpha: mochi.glassBorderOpacity),
+              ),
+            ),
+            child: const RepaintBoundary(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: SoftCharacterPet(),
+              ),
+            ),
+          ),
         ),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: mochi.glassBorderOpacity),
-        ),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.all(16),
-        child: SoftCharacterPet(),
       ),
     );
   }
@@ -90,9 +142,11 @@ class _ForestViewport extends StatelessWidget {
           )
         ],
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(24),
-        child: SoftCharacterPet(),
+      child: const RepaintBoundary(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: SoftCharacterPet(),
+        ),
       ),
     );
   }
@@ -109,9 +163,11 @@ class _SunsetViewport extends StatelessWidget {
         border: Border.all(color: colors.primary, width: 2),
         color: colors.surface,
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(16),
-        child: PixelGridPet(),
+      child: const RepaintBoundary(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: PixelGridPet(),
+        ),
       ),
     );
   }
@@ -135,9 +191,11 @@ class _PaperViewport extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: const Padding(
-        padding: EdgeInsets.all(24),
-        child: SoftCharacterPet(),
+      child: const RepaintBoundary(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: SoftCharacterPet(),
+        ),
       ),
     );
   }

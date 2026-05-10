@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shade/core/theme/theme_extensions.dart';
 import 'package:shade/core/theme/theme_manager.dart';
 import 'package:shade/features/pet/presentation/screens/pet_home_screen.dart';
 import 'package:shade/features/pet/presentation/screens/pet_feed_screen.dart';
 import 'package:shade/features/pet/presentation/screens/pet_stats_screen.dart';
 import 'package:shade/features/pet/presentation/screens/shade_picker_screen.dart';
-
 import 'package:shade/features/pet/presentation/widgets/story_card_renderer.dart';
+import 'package:animations/animations.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class BottomNavShell extends StatefulWidget {
   const BottomNavShell({super.key});
@@ -30,9 +32,29 @@ class _BottomNavShellState extends State<BottomNavShell> {
   Widget build(BuildContext context) {
     final themeStyle = _resolveTheme(context);
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: PageTransitionSwitcher(
+        duration: const Duration(milliseconds: 400),
+        reverse: false,
+        transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+          return FadeThroughTransition(
+            animation: primaryAnimation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(_currentIndex),
+          child: _screens[_currentIndex],
+        ),
+      ),
       bottomNavigationBar: _buildNav(context, themeStyle),
     );
+  }
+
+  void _onTabTapped(int index) {
+    if (_currentIndex == index) return;
+    HapticFeedback.lightImpact();
+    setState(() => _currentIndex = index);
   }
 
   ThemeStyle _resolveTheme(BuildContext context) {
@@ -78,7 +100,8 @@ class _BottomNavShellState extends State<BottomNavShell> {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabTapped(index),
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -125,7 +148,8 @@ class _BottomNavShellState extends State<BottomNavShell> {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabTapped(index),
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -184,7 +208,8 @@ class _BottomNavShellState extends State<BottomNavShell> {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabTapped(index),
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(12),
@@ -207,7 +232,7 @@ class _BottomNavShellState extends State<BottomNavShell> {
           for (int i = 0; i < 5; i++)
             Expanded(
               child: InkWell(
-                onTap: () => setState(() => _currentIndex = i),
+                onTap: () => _onTabTapped(i),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -252,7 +277,8 @@ class _BottomNavShellState extends State<BottomNavShell> {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabTapped(index),
+      behavior: HitTestBehavior.opaque,
       child: Text(
         label,
         style: TextStyle(
@@ -287,33 +313,66 @@ class _PixelIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? activeColor : inactiveColor;
-    return SizedBox(
-      width: 32,
-      height: 32,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: pixels.map((row) {
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: row.map((on) {
-              return Container(
-                width: 6,
-                height: 6,
-                margin: const EdgeInsets.all(0.5),
-                decoration: BoxDecoration(
-                  color: on ? color : Colors.transparent,
-                  boxShadow: active && on
-                      ? [BoxShadow(color: activeColor.withValues(alpha: 0.5), blurRadius: 2)]
-                      : null,
-                ),
-              );
-            }).toList(),
-          );
-        }).toList(),
+    return CustomPaint(
+      size: const Size(30, 30),
+      painter: _PixelIconPainter(
+        pixels: pixels,
+        color: active ? activeColor : inactiveColor,
+        glow: active,
       ),
-    );
+    ).animate(target: active ? 1 : 0).scale(
+          begin: const Offset(1, 1),
+          end: const Offset(1.1, 1.1),
+          duration: 200.ms,
+          curve: Curves.easeOutBack,
+        );
   }
+}
+
+class _PixelIconPainter extends CustomPainter {
+  final List<List<bool>> pixels;
+  final Color color;
+  final bool glow;
+
+  _PixelIconPainter({required this.pixels, required this.color, this.glow = false});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final pixelSize = size.width / 5;
+
+    if (glow) {
+      final glowPaint = Paint()
+        ..color = color.withValues(alpha: 0.3)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+      
+      for (int y = 0; y < pixels.length; y++) {
+        for (int x = 0; x < pixels[y].length; x++) {
+          if (pixels[y][x]) {
+            canvas.drawRect(
+              Rect.fromLTWH(x * pixelSize, y * pixelSize, pixelSize, pixelSize),
+              glowPaint,
+            );
+          }
+        }
+      }
+    }
+
+    for (int y = 0; y < pixels.length; y++) {
+      for (int x = 0; x < pixels[y].length; x++) {
+        if (pixels[y][x]) {
+          canvas.drawRect(
+            Rect.fromLTWH(x * pixelSize, y * pixelSize, pixelSize - 1, pixelSize - 1),
+            paint,
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PixelIconPainter oldDelegate) =>
+      oldDelegate.color != color || oldDelegate.glow != glow;
 }
 
 // ── Pixel Icon Data (5x5 grids from HTML concept) ──

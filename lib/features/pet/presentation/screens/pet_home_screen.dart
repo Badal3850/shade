@@ -5,6 +5,7 @@ import 'package:shade/features/pet/presentation/widgets/pet_viewport.dart';
 import 'package:shade/features/pet/presentation/widgets/post_card.dart';
 import 'package:shade/features/pet/presentation/widgets/sensor_strip.dart';
 import 'package:shade/features/pet/presentation/widgets/stats_section.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class PetHomeScreen extends StatefulWidget {
   const PetHomeScreen({super.key});
@@ -51,10 +52,22 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
-            const PetViewport(),
-            SensorStrip(sensorReading: _provider.sensorReading),
-            StatsSection(petState: _provider.petState),
-            const PostCard(),
+            const PetViewport()
+                .animate()
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: -0.2, end: 0, curve: Curves.easeOutCubic),
+            SensorStrip(sensorReading: _provider.sensorReading)
+                .animate()
+                .fadeIn(delay: 200.ms, duration: 600.ms)
+                .slideX(begin: -0.2, end: 0, curve: Curves.easeOutCubic),
+            StatsSection(petState: _provider.petState)
+                .animate()
+                .fadeIn(delay: 400.ms, duration: 600.ms)
+                .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
+            const PostCard()
+                .animate()
+                .fadeIn(delay: 600.ms, duration: 800.ms)
+                .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1)),
             const SizedBox(height: 16),
           ],
         ),
