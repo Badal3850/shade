@@ -36,6 +36,9 @@ migrate_working_dir/
 # Claude settings
 .claude/
 
+# Signing (never commit keystore to version control)
+/android/keystore.jks
+
 # Symbolication related
 app.*.symbols
 
