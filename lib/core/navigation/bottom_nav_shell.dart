@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shade/core/theme/theme_extensions.dart';
 import 'package:shade/core/theme/theme_manager.dart';
 import 'package:shade/features/pet/presentation/screens/pet_home_screen.dart';
-
+import 'package:shade/features/pet/presentation/screens/pet_feed_screen.dart';
+import 'package:shade/features/pet/presentation/screens/pet_stats_screen.dart';
 import 'package:shade/features/pet/presentation/screens/shade_picker_screen.dart';
+
+import 'package:shade/features/pet/presentation/widgets/story_card_renderer.dart';
 
 class BottomNavShell extends StatefulWidget {
   const BottomNavShell({super.key});
@@ -17,9 +20,9 @@ class _BottomNavShellState extends State<BottomNavShell> {
 
   static const _screens = <Widget>[
     PetHomeScreen(),
-    _PlaceholderTab(label: 'Feed', icon: Icons.list_alt),
-    _PlaceholderTab(label: 'Share', icon: Icons.share),
-    _PlaceholderTab(label: 'Stats', icon: Icons.bar_chart),
+    PetFeedScreen(),
+    StoryCardRenderer(),
+    PetStatsScreen(),
     ShadePickerScreen(),
   ];
 
@@ -266,38 +269,6 @@ class _BottomNavShellState extends State<BottomNavShell> {
 }
 
 
-class _PlaceholderTab extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  const _PlaceholderTab({required this.label, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 48, color: colors.primary.withValues(alpha: 0.3)),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: colors.onSurface.withValues(alpha: 0.3),
-                ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Coming soon',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colors.onSurface.withValues(alpha: 0.2),
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ── Pixel Icon Widget ──
 
