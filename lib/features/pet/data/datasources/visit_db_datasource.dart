@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:digital_pet/core/database/database.dart';
+import 'package:shade/core/database/database.dart';
 
 class VisitDbDataSource {
   final AppDatabase _db;

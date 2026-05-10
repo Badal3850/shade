@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:digital_pet/core/database/database.dart';
-import 'package:digital_pet/features/pet/domain/entities/pet_entity.dart';
+import 'package:shade/core/database/database.dart';
+import 'package:shade/features/pet/domain/entities/pet_entity.dart';
 
 PetEntity petStateDataToEntity(PetStateData data) {
   return PetEntity(

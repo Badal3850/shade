@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:digital_pet/core/database/database.dart';
-import 'package:digital_pet/features/sensors/domain/entities/sensor_reading.dart';
+import 'package:shade/core/database/database.dart';
+import 'package:shade/features/sensors/domain/entities/sensor_reading.dart';
 
 SensorReading sensorLogToReading(SensorLog log) {
   return SensorReading(

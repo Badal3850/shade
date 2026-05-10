@@ -1,17 +1,38 @@
-# digital_pet
+# shade
 
-A new Flutter project.
+Your digital shade — a pet that roasts your life using real data.
 
-## Getting Started
+## Tech Stack
 
-This project is a starting point for a Flutter application.
+- **Framework:** Flutter 3.41.9 (Dart 3.11.5)
+- **AI:** Claude API (pet voice, story generation)
+- **Storage:** SQLite via Drift
+- **Sensors:** sensors_plus, pedometer, battery_plus
+- **Weather:** Open-Meteo API (free)
 
-A few resources to get you started if this is your first Flutter project:
+## Architecture
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Feature-first Clean Architecture:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+lib/
+  core/          # Shared infrastructure (theme, constants, DB, DI)
+  features/
+    pet/         # Pet state machine, decay logic
+    sensors/     # Accelerometer, battery, steps
+    weather/     # Open-Meteo integration
+    story/       # AI-generated content pipeline
+    onboarding/  # First-time setup flow
+```
+
+## Setup
+
+```bash
+flutter pub get
+dart run build_runner build
+flutter run
+```
+
+## CI/CD
+
+GitLab CI pipeline builds signed APKs and publishes to GitHub Releases on main branch.

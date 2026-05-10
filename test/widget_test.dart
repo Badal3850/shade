@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:digital_pet/app.dart';
+import 'package:shade/app.dart';
 
 void main() {
   testWidgets('App launches successfully', (WidgetTester tester) async {
-    await tester.pumpWidget(const DigitalPetApp());
-    expect(find.text('Digital Pet'), findsOneWidget);
+    await tester.pumpWidget(const ShadeApp());
+    expect(find.text('shade'), findsOneWidget);
   });
 }

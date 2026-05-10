@@ -1,4 +1,4 @@
-import 'package:digital_pet/features/pet/domain/entities/pet_entity.dart';
+import 'package:shade/features/pet/domain/entities/pet_entity.dart';
 
 abstract class PetRepository {
   Future<PetEntity> getCurrentState();

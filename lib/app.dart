@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 
-class DigitalPetApp extends StatelessWidget {
-  const DigitalPetApp({super.key});
+class ShadeApp extends StatelessWidget {
+  const ShadeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Digital Pet',
+      title: 'shade',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
@@ -28,7 +28,7 @@ class _AppHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Digital Pet'),
+        child: Text('shade'),
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:digital_pet/core/database/database.dart';
+import 'package:shade/core/database/database.dart';
 
 class PetDbDataSource {
   final AppDatabase _db;

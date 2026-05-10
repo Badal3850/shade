@@ -1,4 +1,4 @@
-import 'package:digital_pet/features/sensors/domain/entities/sensor_reading.dart';
+import 'package:shade/features/sensors/domain/entities/sensor_reading.dart';
 
 abstract class SensorRepository {
   Stream<SensorReading> getSensorStream();

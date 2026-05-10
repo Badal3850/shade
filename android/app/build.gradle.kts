@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.badalm.digital_pet"
+    namespace = "com.badalm.shade"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.badalm.digital_pet"
+        applicationId = "com.badalm.shade"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

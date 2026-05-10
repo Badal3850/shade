@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:digital_pet/features/sensors/data/datasources/sensor_db_datasource.dart';
-import 'package:digital_pet/features/sensors/data/datasources/sensor_local_datasource.dart';
-import 'package:digital_pet/features/sensors/data/models/sensor_mappers.dart';
-import 'package:digital_pet/features/sensors/domain/entities/sensor_reading.dart';
-import 'package:digital_pet/features/sensors/domain/repositories/sensor_repository.dart';
+import 'package:shade/features/sensors/data/datasources/sensor_db_datasource.dart';
+import 'package:shade/features/sensors/data/datasources/sensor_local_datasource.dart';
+import 'package:shade/features/sensors/data/models/sensor_mappers.dart';
+import 'package:shade/features/sensors/domain/entities/sensor_reading.dart';
+import 'package:shade/features/sensors/domain/repositories/sensor_repository.dart';
 
 class SensorRepositoryImpl implements SensorRepository {
   final SensorLocalDataSource _localDataSource;

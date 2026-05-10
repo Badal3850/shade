@@ -1,5 +1,5 @@
-name: digital_pet
-description: "A digital pet that lives on your phone and feels your physical world through sensor data."
+name: shade
+description: "Your digital shade — a pet that roasts your life using real data."
 publish_to: 'none'
 version: 1.0.0+1
 

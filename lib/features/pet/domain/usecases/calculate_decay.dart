@@ -1,5 +1,5 @@
-import 'package:digital_pet/core/constants/app_constants.dart';
-import 'package:digital_pet/features/pet/domain/entities/pet_entity.dart';
+import 'package:shade/core/constants/app_constants.dart';
+import 'package:shade/features/pet/domain/entities/pet_entity.dart';
 
 class CalculateDecay {
   PetEntity call(PetEntity current, DateTime lastVisitTime, {List<String>? triggers}) {

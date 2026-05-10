@@ -1,14 +1,14 @@
 import 'package:get_it/get_it.dart';
-import 'package:digital_pet/core/database/database.dart';
-import 'package:digital_pet/features/pet/data/datasources/pet_db_datasource.dart';
-import 'package:digital_pet/features/pet/data/datasources/visit_db_datasource.dart';
-import 'package:digital_pet/features/pet/data/repositories/pet_repository_impl.dart';
-import 'package:digital_pet/features/pet/domain/repositories/pet_repository.dart';
-import 'package:digital_pet/features/pet/domain/usecases/calculate_decay.dart';
-import 'package:digital_pet/features/sensors/data/datasources/sensor_db_datasource.dart';
-import 'package:digital_pet/features/sensors/data/datasources/sensor_local_datasource.dart';
-import 'package:digital_pet/features/sensors/data/repositories/sensor_repository_impl.dart';
-import 'package:digital_pet/features/sensors/domain/repositories/sensor_repository.dart';
+import 'package:shade/core/database/database.dart';
+import 'package:shade/features/pet/data/datasources/pet_db_datasource.dart';
+import 'package:shade/features/pet/data/datasources/visit_db_datasource.dart';
+import 'package:shade/features/pet/data/repositories/pet_repository_impl.dart';
+import 'package:shade/features/pet/domain/repositories/pet_repository.dart';
+import 'package:shade/features/pet/domain/usecases/calculate_decay.dart';
+import 'package:shade/features/sensors/data/datasources/sensor_db_datasource.dart';
+import 'package:shade/features/sensors/data/datasources/sensor_local_datasource.dart';
+import 'package:shade/features/sensors/data/repositories/sensor_repository_impl.dart';
+import 'package:shade/features/sensors/domain/repositories/sensor_repository.dart';
 
 final sl = GetIt.instance;
 

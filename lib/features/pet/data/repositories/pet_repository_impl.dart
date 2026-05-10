@@ -1,8 +1,8 @@
-import 'package:digital_pet/features/pet/data/datasources/pet_db_datasource.dart';
-import 'package:digital_pet/features/pet/data/models/pet_mappers.dart';
-import 'package:digital_pet/features/pet/domain/entities/pet_entity.dart';
-import 'package:digital_pet/features/pet/domain/repositories/pet_repository.dart';
-import 'package:digital_pet/features/pet/domain/usecases/calculate_decay.dart';
+import 'package:shade/features/pet/data/datasources/pet_db_datasource.dart';
+import 'package:shade/features/pet/data/models/pet_mappers.dart';
+import 'package:shade/features/pet/domain/entities/pet_entity.dart';
+import 'package:shade/features/pet/domain/repositories/pet_repository.dart';
+import 'package:shade/features/pet/domain/usecases/calculate_decay.dart';
 
 class PetRepositoryImpl implements PetRepository {
   final PetDbDataSource _dbDataSource;
