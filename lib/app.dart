@@ -3,6 +3,8 @@ import 'core/di/injection_container.dart';
 import 'core/navigation/app_router.dart';
 import 'core/theme/theme_manager.dart';
 
+import 'package:provider/provider.dart';
+
 class ShadeApp extends StatefulWidget {
   final ThemeManager? themeManager;
 
@@ -32,14 +34,17 @@ class _ShadeAppState extends State<ShadeApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'shade',
-      debugShowCheckedModeBanner: false,
-      theme: _themeManager.lightTheme,
-      darkTheme: _themeManager.darkTheme,
-      themeMode: _themeManager.currentMode,
-      initialRoute: '/',
-      onGenerateRoute: AppRouter.onGenerateRoute,
+    return ChangeNotifierProvider<ThemeManager>.value(
+      value: _themeManager,
+      child: MaterialApp(
+        title: 'shade',
+        debugShowCheckedModeBanner: false,
+        theme: _themeManager.lightTheme,
+        darkTheme: _themeManager.darkTheme,
+        themeMode: _themeManager.currentMode,
+        initialRoute: '/',
+        onGenerateRoute: AppRouter.onGenerateRoute,
+      ),
     );
   }
 }

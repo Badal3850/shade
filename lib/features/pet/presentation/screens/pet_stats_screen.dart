@@ -67,7 +67,7 @@ class _ChartPlaceholder extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(24),
-      height: 200,
+      height: 240,
       width: double.infinity,
       decoration: BoxDecoration(
         color: colors.surfaceContainerHighest.withValues(alpha: 0.3),
