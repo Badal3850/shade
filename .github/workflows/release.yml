@@ -54,7 +54,9 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "value=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | tr -d ' ')" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | tr -d ' ')
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
