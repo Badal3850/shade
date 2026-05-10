@@ -1,4 +1,3 @@
-import 'package:digital_pet/core/errors/failures.dart';
 import 'package:digital_pet/features/weather/domain/entities/weather_entity.dart';
 
 abstract class WeatherRepository {

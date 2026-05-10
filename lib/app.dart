@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'core/di/injection_container.dart';
 import 'core/theme/app_theme.dart';
 
 class DigitalPetApp extends StatelessWidget {

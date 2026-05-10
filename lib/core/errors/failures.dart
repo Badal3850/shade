@@ -20,6 +20,5 @@ class NetworkFailure extends Failure {
 }
 
 class UnknownFailure extends Failure {
-  const UnknownFailure([String message = 'An unexpected error occurred'])
-      : super(message);
+  const UnknownFailure([super.message = 'An unexpected error occurred']);
 }
