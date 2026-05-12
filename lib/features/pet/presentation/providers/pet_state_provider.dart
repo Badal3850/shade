@@ -21,6 +21,10 @@ class PetStateProvider extends ChangeNotifier {
   StreamSubscription<SensorReading>? _sensorSubscription;
   Timer? _pollTimer;
   Timer? _logTimer;
+  Timer? _batteryStepsTimer;
+  int? _cachedBatteryLevel;
+  int? _cachedStepCount;
+
   int? _currentVisitId;
   DateTime? _lastShakeTime;
   bool _isPetJumping = false;
@@ -58,11 +62,16 @@ class PetStateProvider extends ChangeNotifier {
       }
       _currentVisitId = await _visitDbDataSource.recordOpen();
       _sensorReading = await _sensorRepository.getCurrentReading();
+      _cachedBatteryLevel = _sensorReading.batteryLevel;
+      _cachedStepCount = await _sensorRepository.getDailyStepCount();
+
       _isLoading = false;
       notifyListeners();
       _startPolling();
       _startSensorSubscription();
       _startBackgroundLogging();
+      _startBatteryStepsPolling();
+
     } catch (e, stack) {
       debugPrint('[PetStateProvider] initialize error: $e');
       debugPrint('[PetStateProvider] stack: $stack');
@@ -99,13 +108,13 @@ class PetStateProvider extends ChangeNotifier {
         }
       }
 
-      // Merge with existing battery/steps data
+      // Merge stream accelerometer data with periodically cached battery/steps
       _sensorReading = SensorReading(
         accelerometerX: reading.accelerometerX,
         accelerometerY: reading.accelerometerY,
         accelerometerZ: reading.accelerometerZ,
-        batteryLevel: _sensorReading.batteryLevel,
-        stepCount: _sensorReading.stepCount,
+        batteryLevel: _cachedBatteryLevel,
+        stepCount: _cachedStepCount,
         lightLevel: _sensorReading.lightLevel,
         timestamp: reading.timestamp,
       );
@@ -125,6 +134,18 @@ class PetStateProvider extends ChangeNotifier {
     await _petRepository.updateState(_petState);
   }
 
+  void _startBatteryStepsPolling() {
+    _batteryStepsTimer?.cancel();
+    // Refresh battery and step count every 60 seconds
+    _batteryStepsTimer = Timer.periodic(const Duration(seconds: 60), (_) async {
+      try {
+        final reading = await _sensorRepository.getCurrentReading();
+        _cachedBatteryLevel = reading.batteryLevel;
+        _cachedStepCount = await _sensorRepository.getDailyStepCount();
+      } catch (_) {}
+    });
+  }
+
   void setPetJumping(bool value) {
     _isPetJumping = value;
     notifyListeners();
@@ -132,12 +153,10 @@ class PetStateProvider extends ChangeNotifier {
 
   void _startBackgroundLogging() {
     _logTimer?.cancel();
-    // Log state every 5 minutes
+    // Log state every 5 minutes (logging only, does not overwrite live sensor data)
     _logTimer = Timer.periodic(const Duration(minutes: 5), (_) async {
       try {
-        final current = await _sensorRepository.getCurrentReading();
-        _sensorReading = current;
-        notifyListeners();
+        await _sensorRepository.getCurrentReading();
       } catch (_) {}
     });
   }
@@ -154,6 +173,7 @@ class PetStateProvider extends ChangeNotifier {
     _pollTimer?.cancel();
     _sensorSubscription?.cancel();
     _logTimer?.cancel();
+    _batteryStepsTimer?.cancel();
     super.dispose();
   }
 }
