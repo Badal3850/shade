@@ -7,7 +7,7 @@ class CalculateDecay {
     if (hoursElapsed <= 0) return current;
 
     return PetEntity(
-      hunger: _decayStat(current.hunger, AppConstants.hungerDecayRate, hoursElapsed),
+      hunger: _incStat(current.hunger, AppConstants.hungerDecayRate, hoursElapsed),
       energy: _decayStat(current.energy, AppConstants.energyDecayRate, hoursElapsed),
       mood: _decayStat(current.mood, AppConstants.moodDecayRate, hoursElapsed),
       loneliness: _incStat(current.loneliness, AppConstants.lonelinessDecayRate, hoursElapsed),
