@@ -38,7 +38,6 @@ class SunsetTheme {
       const SunsetExtras(
         emberColor: _amber,
         flameColor: _orange,
-        sharpRadius: 4.0,
       ),
     ],
   );

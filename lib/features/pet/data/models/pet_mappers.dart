@@ -9,6 +9,7 @@ PetEntity petStateDataToEntity(PetStateData data) {
     mood: data.mood,
     loneliness: data.loneliness,
     alertness: data.alertness,
+    health: data.health,
   );
 }
 
@@ -20,6 +21,7 @@ PetStateCompanion entityToCompanion(PetEntity entity, DateTime now) {
     mood: Value(entity.mood.clamp(0, 100)),
     loneliness: Value(entity.loneliness.clamp(0, 100)),
     alertness: Value(entity.alertness.clamp(0, 100)),
+    health: Value(entity.health.clamp(0, 100)),
     lastUpdated: Value(now),
   );
 }

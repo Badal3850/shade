@@ -16,12 +16,12 @@ SensorReading sensorLogToReading(SensorLog log) {
 
 SensorLogsCompanion readingToCompanion(SensorReading reading) {
   return SensorLogsCompanion(
-    accelerometerX: Value(reading.accelerometerX),
-    accelerometerY: Value(reading.accelerometerY),
-    accelerometerZ: Value(reading.accelerometerZ),
-    lightLevel: Value(reading.lightLevel),
-    batteryLevel: Value(reading.batteryLevel),
-    stepCount: Value(reading.stepCount),
+    accelerometerX: reading.accelerometerX != null ? Value(reading.accelerometerX!) : const Value.absent(),
+    accelerometerY: reading.accelerometerY != null ? Value(reading.accelerometerY!) : const Value.absent(),
+    accelerometerZ: reading.accelerometerZ != null ? Value(reading.accelerometerZ!) : const Value.absent(),
+    lightLevel: reading.lightLevel != null ? Value(reading.lightLevel!) : const Value.absent(),
+    batteryLevel: reading.batteryLevel != null ? Value(reading.batteryLevel!) : const Value.absent(),
+    stepCount: reading.stepCount != null ? Value(reading.stepCount!) : const Value.absent(),
     timestamp: Value(reading.timestamp),
   );
 }

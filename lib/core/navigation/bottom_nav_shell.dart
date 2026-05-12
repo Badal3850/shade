@@ -108,26 +108,31 @@ class _BottomNavShellState extends State<BottomNavShell> {
   Widget _petlNavItem(BuildContext context, List<List<bool>> pixels, String label, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _PixelIcon(
-            pixels: pixels,
-            activeColor: colors.primary,
-            inactiveColor: colors.onSurface.withValues(alpha: 0.3),
-            active: active,
-          ),
-          const SizedBox(height: 4),
-          Text(label,
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 5,
-                color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
-              )),
-        ],
+    return Semantics(
+      label: '$label tab',
+      button: true,
+      selected: active,
+      child: GestureDetector(
+        onTap: () => _onTabTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _PixelIcon(
+              pixels: pixels,
+              activeColor: colors.primary,
+              inactiveColor: colors.onSurface.withValues(alpha: 0.3),
+              active: active,
+            ),
+            const SizedBox(height: 4),
+            Text(label,
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 5,
+                  color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -156,37 +161,42 @@ class _BottomNavShellState extends State<BottomNavShell> {
   Widget _mochiNavItem(BuildContext context, String emoji, String label, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: active
-                ? BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    gradient: LinearGradient(colors: [
-                      colors.primary.withValues(alpha: 0.12),
-                      colors.secondary.withValues(alpha: 0.08),
-                    ]),
-                    border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
-                  )
-                : null,
-            alignment: Alignment.center,
-            child: Text(emoji, style: const TextStyle(fontSize: 20)),
-          ),
-          const SizedBox(height: 5),
-          Text(label,
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.05,
-                color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
-              )),
-        ],
+    return Semantics(
+      label: '$label tab',
+      button: true,
+      selected: active,
+      child: GestureDetector(
+        onTap: () => _onTabTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: active
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      gradient: LinearGradient(colors: [
+                        colors.primary.withValues(alpha: 0.12),
+                        colors.secondary.withValues(alpha: 0.08),
+                      ]),
+                      border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+                    )
+                  : null,
+              alignment: Alignment.center,
+              child: Text(emoji, style: const TextStyle(fontSize: 20)),
+            ),
+            const SizedBox(height: 5),
+            Text(label,
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.05,
+                  color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -213,23 +223,32 @@ class _BottomNavShellState extends State<BottomNavShell> {
     );
   }
 
+  static const _forestLabels = ['Home', 'Feed', 'Share', 'Stats', 'Shade'];
+
   Widget _forestNavItem(BuildContext context, IconData icon, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: active ? colors.primary.withValues(alpha: 0.15) : Colors.transparent,
-          shape: BoxShape.circle,
+    return Semantics(
+      label: '${_forestLabels[index]} tab',
+      button: true,
+      selected: active,
+      child: GestureDetector(
+        onTap: () => _onTabTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: active ? colors.primary.withValues(alpha: 0.15) : Colors.transparent,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4)),
         ),
-        child: Icon(icon, color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4)),
       ),
     );
   }
+
+  static const _sunsetLabels = ['Home', 'Feed', 'Share', 'Stats', 'Shade'];
 
   Widget _buildSunsetNav(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -240,19 +259,24 @@ class _BottomNavShellState extends State<BottomNavShell> {
         children: [
           for (int i = 0; i < 5; i++)
             Expanded(
-              child: InkWell(
-                onTap: () => _onTabTapped(i),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      [Icons.home, Icons.rss_feed, Icons.flare, Icons.assessment, Icons.brush][i],
-                      color: _currentIndex == i ? colors.primary : colors.onSurface.withValues(alpha: 0.3),
-                    ),
-                    const SizedBox(height: 4),
-                    if (_currentIndex == i)
-                      Container(width: 4, height: 4, decoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle)),
-                  ],
+              child: Semantics(
+                label: '${_sunsetLabels[i]} tab',
+                button: true,
+                selected: _currentIndex == i,
+                child: InkWell(
+                  onTap: () => _onTabTapped(i),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        [Icons.home, Icons.rss_feed, Icons.flare, Icons.assessment, Icons.brush][i],
+                        color: _currentIndex == i ? colors.primary : colors.onSurface.withValues(alpha: 0.3),
+                      ),
+                      const SizedBox(height: 4),
+                      if (_currentIndex == i)
+                        Container(width: 4, height: 4, decoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -285,18 +309,23 @@ class _BottomNavShellState extends State<BottomNavShell> {
   Widget _paperNavItem(BuildContext context, String label, int index) {
     final colors = Theme.of(context).colorScheme;
     final active = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Text(
-        label,
-        style: TextStyle(
-          fontFamily: 'serif',
-          fontSize: 14,
-          fontWeight: active ? FontWeight.bold : FontWeight.normal,
-          fontStyle: active ? FontStyle.italic : FontStyle.normal,
-          color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
-          decoration: active ? TextDecoration.underline : null,
+    return Semantics(
+      label: '$label tab',
+      button: true,
+      selected: active,
+      child: GestureDetector(
+        onTap: () => _onTabTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'serif',
+            fontSize: 14,
+            fontWeight: active ? FontWeight.bold : FontWeight.normal,
+            fontStyle: active ? FontStyle.italic : FontStyle.normal,
+            color: active ? colors.primary : colors.onSurface.withValues(alpha: 0.4),
+            decoration: active ? TextDecoration.underline : null,
+          ),
         ),
       ),
     );

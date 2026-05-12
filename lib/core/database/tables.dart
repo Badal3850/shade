@@ -18,6 +18,7 @@ class PetState extends Table {
   IntColumn get mood => integer().withDefault(const Constant(50))();
   IntColumn get loneliness => integer().withDefault(const Constant(50))();
   IntColumn get alertness => integer().withDefault(const Constant(50))();
+  IntColumn get health => integer().withDefault(const Constant(100))();
   DateTimeColumn get lastUpdated => dateTime()();
 
   @override

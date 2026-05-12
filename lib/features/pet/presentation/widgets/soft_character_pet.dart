@@ -57,6 +57,7 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final provider = context.watch<PetStateProvider>();
+    final petState = provider.petState;
     final sensorReading = provider.sensorReading;
 
     if (provider.isPetJumping && !_jumpController.isAnimating) {
@@ -78,6 +79,9 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
           AnimatedBuilder(
             animation: _glowAnimation,
             builder: (context, _) {
+              final glowColor = petState.health < 30
+                  ? const Color(0xFFff2d78)
+                  : colors.primary;
               return Container(
                 width: 140 * _glowAnimation.value,
                 height: 140 * _glowAnimation.value,
@@ -85,7 +89,7 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      colors.primary.withValues(alpha: 0.15),
+                      glowColor.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -104,7 +108,7 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
                   ..rotateY(tiltX * 0.2)
                   ..rotateX(-tiltY * 0.1),
                 alignment: Alignment.center,
-                child: _buildCharacter(context, tiltX, tiltY),
+                child: _buildCharacter(context, tiltX, tiltY, petState.mood),
               );
             },
           ),
@@ -113,7 +117,11 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
     );
   }
 
-  Widget _buildCharacter(BuildContext context, double tiltX, double tiltY) {
+  Widget _buildCharacter(BuildContext context, double tiltX, double tiltY, int mood) {
+    final eyeWidth = mood < 40 ? 12.0 : 14.0;
+    final eyeHeight = mood < 40 ? 10.0 : 16.0;
+    final eyeTopRadius = mood < 40 ? const Radius.circular(5) : const Radius.circular(7);
+    final eyeBottomRadius = mood < 40 ? const Radius.circular(2) : const Radius.circular(7);
     return SizedBox(
       width: 120,
       height: 140,
@@ -279,10 +287,16 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
           Positioned(
             top: 32 + (tiltY * 2),
             left: 18 + (tiltX * 3),
-            child: ClipOval(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: eyeTopRadius,
+                topRight: eyeTopRadius,
+                bottomLeft: eyeBottomRadius,
+                bottomRight: eyeBottomRadius,
+              ),
               child: Container(
-                width: 14,
-                height: 16,
+                width: eyeWidth,
+                height: eyeHeight,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
@@ -321,10 +335,16 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
           Positioned(
             top: 32 + (tiltY * 2),
             right: 18 - (tiltX * 3),
-            child: ClipOval(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: eyeTopRadius,
+                topRight: eyeTopRadius,
+                bottomLeft: eyeBottomRadius,
+                bottomRight: eyeBottomRadius,
+              ),
               child: Container(
-                width: 14,
-                height: 16,
+                width: eyeWidth,
+                height: eyeHeight,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),

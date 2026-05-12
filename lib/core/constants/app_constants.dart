@@ -21,10 +21,6 @@ class AppConstants {
   static const int batteryLowThreshold = 15;
   static const int batteryCriticalThreshold = 5;
 
-  // API
-  static const String openMeteoBaseUrl = 'https://api.open-meteo.com/v1';
-  static const String anthropicBaseUrl = 'https://api.anthropic.com/v1';
-
   // Time constants
   static const int morningStartHour = 6;
   static const int morningEndHour = 8;

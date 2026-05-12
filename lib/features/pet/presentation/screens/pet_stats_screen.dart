@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shade/core/layout/app_layout.dart';
 import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 import 'package:shade/features/pet/presentation/widgets/stats_section.dart';
 import 'package:shade/features/pet/presentation/widgets/sensor_strip.dart';
@@ -21,6 +22,15 @@ class _PetStatsScreenState extends State<PetStatsScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    if (provider.error != null) {
+      return Center(
+        child: Text(
+          'Error: ${provider.error}',
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('DETAILED STATS').animate().fadeIn(duration: 400.ms),
@@ -28,26 +38,60 @@ class _PetStatsScreenState extends State<PetStatsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          children: [
-            StatsSection(petState: provider.petState)
-                .animate()
-                .fadeIn(duration: 600.ms)
-                .slideY(begin: -0.1, end: 0),
-            const SizedBox(height: 24),
-            const _ChartPlaceholder()
-                .animate()
-                .fadeIn(delay: 200.ms, duration: 600.ms)
-                .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1)),
-            const SizedBox(height: 24),
-            SensorStrip(sensorReading: provider.sensorReading)
-                .animate()
-                .fadeIn(delay: 400.ms, duration: 600.ms)
-                .slideY(begin: 0.1, end: 0),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (AppLayout.isWide(context)) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: StatsSection(petState: provider.petState)
+                        .animate().fadeIn(duration: 600.ms),
+                  ),
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Column(
+                      children: [
+                        const _ChartPlaceholder()
+                            .animate().fadeIn(delay: 200.ms, duration: 600.ms),
+                        const SizedBox(height: 24),
+                        SensorStrip(sensorReading: provider.sensorReading)
+                            .animate().fadeIn(delay: 400.ms, duration: 600.ms),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+          // narrow layout (existing)
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              children: [
+                StatsSection(petState: provider.petState)
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideY(begin: -0.1, end: 0),
+                const SizedBox(height: 24),
+                const _ChartPlaceholder()
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 600.ms)
+                    .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1)),
+                const SizedBox(height: 24),
+                SensorStrip(sensorReading: provider.sensorReading)
+                    .animate()
+                    .fadeIn(delay: 400.ms, duration: 600.ms)
+                    .slideY(begin: 0.1, end: 0),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

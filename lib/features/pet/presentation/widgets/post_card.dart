@@ -24,7 +24,20 @@ class PostCard extends StatelessWidget {
 
 // ── PETL.EXE: terminal-log card ──
 
-class _PetlPost extends StatelessWidget {
+class _PetlPost extends StatefulWidget {
+  @override
+  State<_PetlPost> createState() => _PetlPostState();
+}
+
+class _PetlPostState extends State<_PetlPost> {
+  late final DateTime _timestamp;
+
+  @override
+  void initState() {
+    super.initState();
+    _timestamp = DateTime.now();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -53,7 +66,7 @@ class _PetlPost extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '[ ${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')} ]',
+                '[ ${_timestamp.hour.toString().padLeft(2, '0')}:${_timestamp.minute.toString().padLeft(2, '0')}:${_timestamp.second.toString().padLeft(2, '0')} ]',
                 style: TextStyle(
                   fontFamily: 'monospace',
                   fontSize: 6,
@@ -249,7 +262,20 @@ class _SunsetPost extends StatelessWidget {
 
 // ── Paper: typewriter note ──
 
-class _PaperPost extends StatelessWidget {
+class _PaperPost extends StatefulWidget {
+  @override
+  State<_PaperPost> createState() => _PaperPostState();
+}
+
+class _PaperPostState extends State<_PaperPost> {
+  late final DateTime _timestamp;
+
+  @override
+  void initState() {
+    super.initState();
+    _timestamp = DateTime.now();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -267,7 +293,7 @@ class _PaperPost extends StatelessWidget {
             children: [
               Text('MEMO', style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.bold, fontSize: 14)),
               const Spacer(),
-              Text(DateTime.now().toString().split(' ')[0], style: TextStyle(fontFamily: 'serif', fontSize: 10)),
+              Text(_timestamp.toString().split(' ')[0], style: TextStyle(fontFamily: 'serif', fontSize: 10)),
             ],
           ),
           const Divider(),

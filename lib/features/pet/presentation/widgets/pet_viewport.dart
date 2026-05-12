@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shade/core/theme/theme_extensions.dart';
+import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 import 'package:shade/features/pet/presentation/widgets/pixel_grid_pet.dart';
 import 'package:shade/features/pet/presentation/widgets/soft_character_pet.dart';
 
@@ -9,19 +11,23 @@ class PetViewport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<PetStateProvider>();
+    Widget viewport;
     if (Theme.of(context).extension<PetlExtras>() != null) {
-      return _PetlViewport();
+      viewport = _PetlViewport();
+    } else if (Theme.of(context).extension<MochiExtras>() != null) {
+      viewport = _MochiViewport();
+    } else if (Theme.of(context).extension<ForestExtras>() != null) {
+      viewport = _ForestViewport();
+    } else if (Theme.of(context).extension<SunsetExtras>() != null) {
+      viewport = _SunsetViewport();
+    } else {
+      viewport = _PaperViewport();
     }
-    if (Theme.of(context).extension<MochiExtras>() != null) {
-      return _MochiViewport();
-    }
-    if (Theme.of(context).extension<ForestExtras>() != null) {
-      return _ForestViewport();
-    }
-    if (Theme.of(context).extension<SunsetExtras>() != null) {
-      return _SunsetViewport();
-    }
-    return _PaperViewport();
+    return GestureDetector(
+      onTap: provider.pet,
+      child: viewport,
+    );
   }
 }
 

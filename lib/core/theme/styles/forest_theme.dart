@@ -40,7 +40,6 @@ class ForestTheme {
       const ForestExtras(
         leafAccent: _leaf,
         mossColor: _moss,
-        organicBorderRadius: 32.0,
       ),
     ],
   );

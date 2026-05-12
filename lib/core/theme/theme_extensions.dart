@@ -167,24 +167,20 @@ class MochiExtras extends ThemeExtension<MochiExtras> {
 class ForestExtras extends ThemeExtension<ForestExtras> {
   final Color leafAccent;
   final Color mossColor;
-  final double organicBorderRadius;
 
   const ForestExtras({
     required this.leafAccent,
     required this.mossColor,
-    required this.organicBorderRadius,
   });
 
   @override
   ForestExtras copyWith({
     Color? leafAccent,
     Color? mossColor,
-    double? organicBorderRadius,
   }) {
     return ForestExtras(
       leafAccent: leafAccent ?? this.leafAccent,
       mossColor: mossColor ?? this.mossColor,
-      organicBorderRadius: organicBorderRadius ?? this.organicBorderRadius,
     );
   }
 
@@ -194,8 +190,6 @@ class ForestExtras extends ThemeExtension<ForestExtras> {
     return ForestExtras(
       leafAccent: Color.lerp(leafAccent, other.leafAccent, t)!,
       mossColor: Color.lerp(mossColor, other.mossColor, t)!,
-      organicBorderRadius:
-          lerpDouble(organicBorderRadius, other.organicBorderRadius, t)!,
     );
   }
 
@@ -204,11 +198,10 @@ class ForestExtras extends ThemeExtension<ForestExtras> {
       identical(this, other) ||
       (other is ForestExtras &&
           leafAccent == other.leafAccent &&
-          mossColor == other.mossColor &&
-          organicBorderRadius == other.organicBorderRadius);
+          mossColor == other.mossColor);
 
   @override
-  int get hashCode => Object.hash(leafAccent, mossColor, organicBorderRadius);
+  int get hashCode => Object.hash(leafAccent, mossColor);
 }
 
 // ──────────────────────────────────────────────
@@ -218,24 +211,17 @@ class ForestExtras extends ThemeExtension<ForestExtras> {
 class SunsetExtras extends ThemeExtension<SunsetExtras> {
   final Color emberColor;
   final Color flameColor;
-  final double sharpRadius;
 
   const SunsetExtras({
     required this.emberColor,
     required this.flameColor,
-    required this.sharpRadius,
   });
 
   @override
-  SunsetExtras copyWith({
-    Color? emberColor,
-    Color? flameColor,
-    double? sharpRadius,
-  }) {
+  SunsetExtras copyWith({Color? emberColor, Color? flameColor}) {
     return SunsetExtras(
       emberColor: emberColor ?? this.emberColor,
       flameColor: flameColor ?? this.flameColor,
-      sharpRadius: sharpRadius ?? this.sharpRadius,
     );
   }
 
@@ -245,7 +231,6 @@ class SunsetExtras extends ThemeExtension<SunsetExtras> {
     return SunsetExtras(
       emberColor: Color.lerp(emberColor, other.emberColor, t)!,
       flameColor: Color.lerp(flameColor, other.flameColor, t)!,
-      sharpRadius: lerpDouble(sharpRadius, other.sharpRadius, t)!,
     );
   }
 
@@ -254,11 +239,10 @@ class SunsetExtras extends ThemeExtension<SunsetExtras> {
       identical(this, other) ||
       (other is SunsetExtras &&
           emberColor == other.emberColor &&
-          flameColor == other.flameColor &&
-          sharpRadius == other.sharpRadius);
+          flameColor == other.flameColor);
 
   @override
-  int get hashCode => Object.hash(emberColor, flameColor, sharpRadius);
+  int get hashCode => Object.hash(emberColor, flameColor);
 }
 
 // ──────────────────────────────────────────────

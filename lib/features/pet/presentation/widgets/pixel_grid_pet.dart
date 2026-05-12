@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shade/features/onboarding/pet_name_manager.dart';
 import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 
 class PixelGridPet extends StatefulWidget {
@@ -45,10 +46,25 @@ class _PixelGridPetState extends State<PixelGridPet>
     super.dispose();
   }
 
+  static String _moodLabel(int mood) {
+    if (mood >= 70) return 'HAPPY ★';
+    if (mood >= 40) return 'OKAY ~';
+    if (mood >= 20) return 'SAD...';
+    return 'CRITICAL !!';
+  }
+
+  static Color _badgeColor(int health) {
+    if (health >= 70) return const Color(0xFFffee00);
+    if (health >= 40) return const Color(0xFFff8800);
+    return const Color(0xFFff2d78);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final provider = context.watch<PetStateProvider>();
+    final petState = provider.petState;
+    final petName = context.read<PetNameManager>().name;
     final sensorReading = provider.sensorReading;
 
     if (provider.isPetJumping && !_jumpController.isAnimating) {
@@ -60,144 +76,171 @@ class _PixelGridPetState extends State<PixelGridPet>
     // Calculate tilt
     final tiltX = (sensorReading.accelerometerX ?? 0).clamp(-5, 5) / 5.0;
     final tiltY = (sensorReading.accelerometerY ?? 0).clamp(-5, 5) / 5.0;
-    return SizedBox(
-      height: 240,
-      child: Stack(
-        children: [
-          // Grid overlay background
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _GridPainter(
-                gridColor: colors.primary.withValues(alpha: 0.04),
+    return Semantics(
+      label: 'Pet character display',
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 240),
+        child: Stack(
+          children: [
+            // Grid overlay background
+            Positioned.fill(
+              child: ExcludeSemantics(
+                child: CustomPaint(
+                  painter: _GridPainter(
+                    gridColor: colors.primary.withValues(alpha: 0.04),
+                  ),
+                ),
               ),
             ),
-          ),
-          // Scanline sweep
-          _ScanlineSweep(
-            scanlineColor: colors.primary.withValues(alpha: 0.08),
-          ),
-          // Animated pet
-          Center(
-            child: AnimatedBuilder(
-              animation: _floatAnimation,
-              builder: (context, child) {
-                return Transform(
-                  transform: Matrix4.identity()
-                    ..translateByDouble(tiltX * 15, _floatAnimation.value + _jumpAnimation.value + (tiltY * 5), 0, 1),
-                  alignment: Alignment.center,
-                  child: child,
-                );
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Mood badge
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                    color: const Color(0xFFffee00),
-                    child: const Text(
-                      'CHAOTIC GOOD ★',
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 7,
-                        color: Color(0xFF0a0a0f),
+            // Scanline sweep
+            Positioned.fill(
+              child: ExcludeSemantics(
+                child: _ScanlineSweep(
+                  scanlineColor: colors.primary.withValues(alpha: 0.08),
+                ),
+              ),
+            ),
+            // Animated pet
+            Center(
+              child: AnimatedBuilder(
+                animation: _floatAnimation,
+                builder: (context, child) {
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..translateByDouble(
+                        tiltX * 15,
+                        _floatAnimation.value +
+                            _jumpAnimation.value +
+                            (tiltY * 5),
+                        0,
+                        1,
+                      ),
+                    alignment: Alignment.center,
+                    child: child,
+                  );
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Mood badge
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      color: _badgeColor(petState.health),
+                      child: Text(
+                        petName.isNotEmpty
+                            ? '${petName.toUpperCase()} · ${_moodLabel(petState.mood)}'
+                            : _moodLabel(petState.mood),
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 7,
+                          color: Color(0xFF0a0a0f),
+                        ),
                       ),
                     ),
-                  ),
-                  // Pixel grid
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _pixels.map((row) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: row.map((code) {
-                          return Container(
-                            width: _cellSize,
-                            height: _cellSize,
-                            margin: const EdgeInsets.all(0.5),
-                            decoration: BoxDecoration(
-                              color: _colorFromCode(code),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                    // Pixel grid
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _pixels.map((row) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: row.map((code) {
+                            return Container(
+                              width: _cellSize,
+                              height: _cellSize,
+                              margin: const EdgeInsets.all(0.5),
+                              decoration: BoxDecoration(
+                                color: _colorFromCode(code),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          // Floor
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: CustomPaint(
-              painter: _DashPainter(
-                color: colors.primary.withValues(alpha: 0.4),
+            // Floor
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: ExcludeSemantics(
+                child: CustomPaint(
+                  painter: _DashPainter(
+                    color: colors.primary.withValues(alpha: 0.4),
+                  ),
+                  size: const Size(double.infinity, 2),
+                ),
               ),
-              size: const Size(double.infinity, 2),
             ),
-          ),
-          // Shadow
-          Positioned(
-            bottom: 14,
-            left: 0,
-            right: 0,
-            child: AnimatedBuilder(
-              animation: _floatAnimation,
-              builder: (context, _) {
-                final shadowScale =
-                    1 - (_floatAnimation.value.abs() / 16) * 0.3;
-                final shadowOpacity =
-                    0.6 - (_floatAnimation.value.abs() / 16) * 0.3;
-                return Center(
-                  child: Transform.scale(
-                    scaleX: shadowScale,
-                    child: ClipOval(
-                      child: Container(
-                        width: 80,
-                        height: 8,
-                        color: colors.primary
-                            .withValues(alpha: shadowOpacity * 0.5),
+            // Shadow
+            Positioned(
+              bottom: 14,
+              left: 0,
+              right: 0,
+              child: AnimatedBuilder(
+                animation: _floatAnimation,
+                builder: (context, _) {
+                  final shadowScale =
+                      1 - (_floatAnimation.value.abs() / 16) * 0.3;
+                  final shadowOpacity =
+                      0.6 - (_floatAnimation.value.abs() / 16) * 0.3;
+                  return Center(
+                    child: Transform.scale(
+                      scaleX: shadowScale,
+                      child: ClipOval(
+                        child: Container(
+                          width: 80,
+                          height: 8,
+                          color: colors.primary.withValues(
+                            alpha: shadowOpacity * 0.5,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          // Corner decorations
-          Positioned(
-            top: 0,
-            left: 0,
-            child: _CornerBracket(
-              color: colors.primary,
-              corner: Corner.topLeft,
+            // Corner decorations
+            Positioned(
+              top: 0,
+              left: 0,
+              child: ExcludeSemantics(
+                child: _CornerBracket(
+                  color: colors.primary,
+                  corner: Corner.topLeft,
+                ),
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: _CornerBracket(
-              color: colors.primary,
-              corner: Corner.bottomRight,
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: ExcludeSemantics(
+                child: _CornerBracket(
+                  color: colors.primary,
+                  corner: Corner.bottomRight,
+                ),
+              ),
             ),
-          ),
-          // Labels
-          Positioned(
-            top: 8,
-            left: 8,
-            child: _BlinkingLabel('LIVE FEED', colors.secondary),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: _BlinkingLabel('● REC', colors.secondary),
-          ),
-        ],
+            // Labels
+            Positioned(
+              top: 8,
+              left: 8,
+              child: _BlinkingLabel('LIVE FEED', colors.secondary),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: _BlinkingLabel('● REC', colors.secondary),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -283,10 +326,8 @@ class _ScanlineSweepState extends State<_ScanlineSweep>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, _) {
-        return Positioned(
-          top: _animation.value * 240,
-          left: 0,
-          right: 0,
+        return Align(
+          alignment: Alignment(0, (_animation.value * 2) - 1),
           child: IgnorePointer(
             child: Container(
               height: 3,
@@ -409,35 +450,307 @@ Color _colorFromCode(String code) {
 
 const _pixels = <List<String>>[
   // Row 0
-  ['n', 'n', 'n', 'n', 'n', 'p', 'p', 'p', 'p', 'p', 'p', 'n', 'n', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'n',
+    'n',
+    'n',
+    'p',
+    'p',
+    'p',
+    'p',
+    'p',
+    'p',
+    'n',
+    'n',
+    'n',
+    'n',
+    'n',
+  ],
   // Row 1
-  ['n', 'n', 'n', 'p', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'p', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'n',
+    'p',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'p',
+    'n',
+    'n',
+    'n',
+  ],
   // Row 2
-  ['n', 'n', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+  ],
   // Row 3 — eyes
-  ['n', 'p', 'c', 'c', 'w', 'w', 'c', 'c', 'c', 'w', 'w', 'c', 'c', 'c', 'p', 'n'],
+  [
+    'n',
+    'p',
+    'c',
+    'c',
+    'w',
+    'w',
+    'c',
+    'c',
+    'c',
+    'w',
+    'w',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+  ],
   // Row 4 — pupils
-  ['n', 'p', 'c', 'c', 'w', 'b', 'c', 'c', 'c', 'w', 'b', 'c', 'c', 'c', 'p', 'n'],
+  [
+    'n',
+    'p',
+    'c',
+    'c',
+    'w',
+    'b',
+    'c',
+    'c',
+    'c',
+    'w',
+    'b',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+  ],
   // Row 5
-  ['n', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'n'],
+  [
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+  ],
   // Row 6 — mouth
-  ['n', 'p', 'c', 'c', 'c', 'k', 'k', 'k', 'k', 'k', 'c', 'c', 'c', 'c', 'p', 'n'],
+  [
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'k',
+    'k',
+    'k',
+    'k',
+    'k',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+  ],
   // Row 7
-  ['n', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'n'],
+  [
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+  ],
   // Row 8
-  ['n', 'n', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+  ],
   // Row 9 — belly
-  ['p', 'n', 'p', 'c', 'y', 'y', 'c', 'c', 'c', 'c', 'y', 'y', 'c', 'p', 'n', 'p'],
+  [
+    'p',
+    'n',
+    'p',
+    'c',
+    'y',
+    'y',
+    'c',
+    'c',
+    'c',
+    'c',
+    'y',
+    'y',
+    'c',
+    'p',
+    'n',
+    'p',
+  ],
   // Row 10
-  ['c', 'p', 'n', 'p', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'p', 'n', 'p', 'c'],
+  [
+    'c',
+    'p',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+    'p',
+    'c',
+  ],
   // Row 11 — arms
-  ['c', 'c', 'p', 'n', 'p', 'c', 'c', 'c', 'c', 'c', 'p', 'n', 'p', 'c', 'c', 'c'],
+  [
+    'c',
+    'c',
+    'p',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+  ],
   // Row 12
-  ['n', 'n', 'n', 'n', 'p', 'c', 'c', 'c', 'c', 'c', 'p', 'n', 'n', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'c',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+    'n',
+    'n',
+    'n',
+  ],
   // Row 13 — legs
-  ['n', 'n', 'n', 'p', 'c', 'c', 'n', 'n', 'n', 'c', 'c', 'p', 'n', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'n',
+    'n',
+    'n',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+    'n',
+    'n',
+  ],
   // Row 14
-  ['n', 'n', 'n', 'p', 'c', 'c', 'n', 'n', 'n', 'c', 'c', 'p', 'n', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'n',
+    'n',
+    'n',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+    'n',
+    'n',
+  ],
   // Row 15 — feet
-  ['n', 'n', 'p', 'c', 'c', 'p', 'n', 'n', 'n', 'p', 'c', 'c', 'p', 'n', 'n', 'n'],
+  [
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+    'n',
+    'p',
+    'c',
+    'c',
+    'p',
+    'n',
+    'n',
+    'n',
+  ],
 ];

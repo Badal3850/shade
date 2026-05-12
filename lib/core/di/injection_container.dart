@@ -12,6 +12,12 @@ import 'package:shade/features/sensors/data/datasources/sensor_db_datasource.dar
 import 'package:shade/features/sensors/data/datasources/sensor_local_datasource.dart';
 import 'package:shade/features/sensors/data/repositories/sensor_repository_impl.dart';
 import 'package:shade/features/sensors/domain/repositories/sensor_repository.dart';
+import 'package:shade/features/story/data/repositories/story_repository_impl.dart';
+import 'package:shade/features/onboarding/pet_name_manager.dart';
+import 'package:shade/features/story/presentation/providers/story_provider.dart';
+import 'package:shade/features/weather/data/datasources/weather_datasource.dart';
+import 'package:shade/features/weather/data/repositories/weather_repository_impl.dart';
+import 'package:shade/features/weather/domain/repositories/weather_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -23,6 +29,9 @@ Future<void> configureDependencies() async {
   // Persistence
   final prefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => prefs);
+
+  // Pet Name
+  sl.registerLazySingleton<PetNameManager>(() => PetNameManager(prefs));
 
   // Theme
   final themeManager = ThemeManager(prefs);
@@ -50,18 +59,25 @@ Future<void> configureDependencies() async {
     ),
   );
 
+  // Weather
+  sl.registerLazySingleton<WeatherDataSource>(() => WeatherDataSource());
+  sl.registerLazySingleton<WeatherRepository>(
+    () => WeatherRepositoryImpl(sl<WeatherDataSource>()),
+  );
+
   // Pet State Provider
   sl.registerLazySingleton<PetStateProvider>(
     () => PetStateProvider(
       petRepository: sl<PetRepository>(),
       visitDbDataSource: sl<VisitDbDataSource>(),
       sensorRepository: sl<SensorRepository>(),
+      weatherRepository: sl<WeatherRepository>(),
     ),
   );
 
-  // Weather
-  // (to be implemented in Phase 2/3)
-
   // Story
-  // (to be implemented in Phase 3)
+  sl.registerLazySingleton<StoryRepositoryImpl>(() => StoryRepositoryImpl());
+  sl.registerLazySingleton<StoryProvider>(
+    () => StoryProvider(sl<StoryRepositoryImpl>()),
+  );
 }

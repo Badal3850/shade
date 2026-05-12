@@ -609,6 +609,16 @@ class $PetStateTable extends PetState
     requiredDuringInsert: false,
     defaultValue: const Constant(50),
   );
+  static const VerificationMeta _healthMeta = const VerificationMeta('health');
+  @override
+  late final GeneratedColumn<int> health = GeneratedColumn<int>(
+    'health',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(100),
+  );
   static const VerificationMeta _lastUpdatedMeta = const VerificationMeta(
     'lastUpdated',
   );
@@ -628,6 +638,7 @@ class $PetStateTable extends PetState
     mood,
     loneliness,
     alertness,
+    health,
     lastUpdated,
   ];
   @override
@@ -675,6 +686,12 @@ class $PetStateTable extends PetState
         alertness.isAcceptableOrUnknown(data['alertness']!, _alertnessMeta),
       );
     }
+    if (data.containsKey('health')) {
+      context.handle(
+        _healthMeta,
+        health.isAcceptableOrUnknown(data['health']!, _healthMeta),
+      );
+    }
     if (data.containsKey('last_updated')) {
       context.handle(
         _lastUpdatedMeta,
@@ -719,6 +736,10 @@ class $PetStateTable extends PetState
         DriftSqlType.int,
         data['${effectivePrefix}alertness'],
       )!,
+      health: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}health'],
+      )!,
       lastUpdated: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_updated'],
@@ -739,6 +760,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
   final int mood;
   final int loneliness;
   final int alertness;
+  final int health;
   final DateTime lastUpdated;
   const PetStateData({
     required this.id,
@@ -747,6 +769,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
     required this.mood,
     required this.loneliness,
     required this.alertness,
+    required this.health,
     required this.lastUpdated,
   });
   @override
@@ -758,6 +781,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
     map['mood'] = Variable<int>(mood);
     map['loneliness'] = Variable<int>(loneliness);
     map['alertness'] = Variable<int>(alertness);
+    map['health'] = Variable<int>(health);
     map['last_updated'] = Variable<DateTime>(lastUpdated);
     return map;
   }
@@ -770,6 +794,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
       mood: Value(mood),
       loneliness: Value(loneliness),
       alertness: Value(alertness),
+      health: Value(health),
       lastUpdated: Value(lastUpdated),
     );
   }
@@ -786,6 +811,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
       mood: serializer.fromJson<int>(json['mood']),
       loneliness: serializer.fromJson<int>(json['loneliness']),
       alertness: serializer.fromJson<int>(json['alertness']),
+      health: serializer.fromJson<int>(json['health']),
       lastUpdated: serializer.fromJson<DateTime>(json['lastUpdated']),
     );
   }
@@ -799,6 +825,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
       'mood': serializer.toJson<int>(mood),
       'loneliness': serializer.toJson<int>(loneliness),
       'alertness': serializer.toJson<int>(alertness),
+      'health': serializer.toJson<int>(health),
       'lastUpdated': serializer.toJson<DateTime>(lastUpdated),
     };
   }
@@ -810,6 +837,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
     int? mood,
     int? loneliness,
     int? alertness,
+    int? health,
     DateTime? lastUpdated,
   }) => PetStateData(
     id: id ?? this.id,
@@ -818,6 +846,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
     mood: mood ?? this.mood,
     loneliness: loneliness ?? this.loneliness,
     alertness: alertness ?? this.alertness,
+    health: health ?? this.health,
     lastUpdated: lastUpdated ?? this.lastUpdated,
   );
   PetStateData copyWithCompanion(PetStateCompanion data) {
@@ -830,6 +859,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
           ? data.loneliness.value
           : this.loneliness,
       alertness: data.alertness.present ? data.alertness.value : this.alertness,
+      health: data.health.present ? data.health.value : this.health,
       lastUpdated: data.lastUpdated.present
           ? data.lastUpdated.value
           : this.lastUpdated,
@@ -845,14 +875,23 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
           ..write('mood: $mood, ')
           ..write('loneliness: $loneliness, ')
           ..write('alertness: $alertness, ')
+          ..write('health: $health, ')
           ..write('lastUpdated: $lastUpdated')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, hunger, energy, mood, loneliness, alertness, lastUpdated);
+  int get hashCode => Object.hash(
+    id,
+    hunger,
+    energy,
+    mood,
+    loneliness,
+    alertness,
+    health,
+    lastUpdated,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -863,6 +902,7 @@ class PetStateData extends DataClass implements Insertable<PetStateData> {
           other.mood == this.mood &&
           other.loneliness == this.loneliness &&
           other.alertness == this.alertness &&
+          other.health == this.health &&
           other.lastUpdated == this.lastUpdated);
 }
 
@@ -873,6 +913,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
   final Value<int> mood;
   final Value<int> loneliness;
   final Value<int> alertness;
+  final Value<int> health;
   final Value<DateTime> lastUpdated;
   const PetStateCompanion({
     this.id = const Value.absent(),
@@ -881,6 +922,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
     this.mood = const Value.absent(),
     this.loneliness = const Value.absent(),
     this.alertness = const Value.absent(),
+    this.health = const Value.absent(),
     this.lastUpdated = const Value.absent(),
   });
   PetStateCompanion.insert({
@@ -890,6 +932,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
     this.mood = const Value.absent(),
     this.loneliness = const Value.absent(),
     this.alertness = const Value.absent(),
+    this.health = const Value.absent(),
     required DateTime lastUpdated,
   }) : lastUpdated = Value(lastUpdated);
   static Insertable<PetStateData> custom({
@@ -899,6 +942,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
     Expression<int>? mood,
     Expression<int>? loneliness,
     Expression<int>? alertness,
+    Expression<int>? health,
     Expression<DateTime>? lastUpdated,
   }) {
     return RawValuesInsertable({
@@ -908,6 +952,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
       if (mood != null) 'mood': mood,
       if (loneliness != null) 'loneliness': loneliness,
       if (alertness != null) 'alertness': alertness,
+      if (health != null) 'health': health,
       if (lastUpdated != null) 'last_updated': lastUpdated,
     });
   }
@@ -919,6 +964,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
     Value<int>? mood,
     Value<int>? loneliness,
     Value<int>? alertness,
+    Value<int>? health,
     Value<DateTime>? lastUpdated,
   }) {
     return PetStateCompanion(
@@ -928,6 +974,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
       mood: mood ?? this.mood,
       loneliness: loneliness ?? this.loneliness,
       alertness: alertness ?? this.alertness,
+      health: health ?? this.health,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
@@ -953,6 +1000,9 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
     if (alertness.present) {
       map['alertness'] = Variable<int>(alertness.value);
     }
+    if (health.present) {
+      map['health'] = Variable<int>(health.value);
+    }
     if (lastUpdated.present) {
       map['last_updated'] = Variable<DateTime>(lastUpdated.value);
     }
@@ -968,6 +1018,7 @@ class PetStateCompanion extends UpdateCompanion<PetStateData> {
           ..write('mood: $mood, ')
           ..write('loneliness: $loneliness, ')
           ..write('alertness: $alertness, ')
+          ..write('health: $health, ')
           ..write('lastUpdated: $lastUpdated')
           ..write(')'))
         .toString();
@@ -1513,6 +1564,7 @@ typedef $$PetStateTableCreateCompanionBuilder =
       Value<int> mood,
       Value<int> loneliness,
       Value<int> alertness,
+      Value<int> health,
       required DateTime lastUpdated,
     });
 typedef $$PetStateTableUpdateCompanionBuilder =
@@ -1523,6 +1575,7 @@ typedef $$PetStateTableUpdateCompanionBuilder =
       Value<int> mood,
       Value<int> loneliness,
       Value<int> alertness,
+      Value<int> health,
       Value<DateTime> lastUpdated,
     });
 
@@ -1562,6 +1615,11 @@ class $$PetStateTableFilterComposer
 
   ColumnFilters<int> get alertness => $composableBuilder(
     column: $table.alertness,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get health => $composableBuilder(
+    column: $table.health,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1610,6 +1668,11 @@ class $$PetStateTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get health => $composableBuilder(
+    column: $table.health,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastUpdated => $composableBuilder(
     column: $table.lastUpdated,
     builder: (column) => ColumnOrderings(column),
@@ -1644,6 +1707,9 @@ class $$PetStateTableAnnotationComposer
 
   GeneratedColumn<int> get alertness =>
       $composableBuilder(column: $table.alertness, builder: (column) => column);
+
+  GeneratedColumn<int> get health =>
+      $composableBuilder(column: $table.health, builder: (column) => column);
 
   GeneratedColumn<DateTime> get lastUpdated => $composableBuilder(
     column: $table.lastUpdated,
@@ -1688,6 +1754,7 @@ class $$PetStateTableTableManager
                 Value<int> mood = const Value.absent(),
                 Value<int> loneliness = const Value.absent(),
                 Value<int> alertness = const Value.absent(),
+                Value<int> health = const Value.absent(),
                 Value<DateTime> lastUpdated = const Value.absent(),
               }) => PetStateCompanion(
                 id: id,
@@ -1696,6 +1763,7 @@ class $$PetStateTableTableManager
                 mood: mood,
                 loneliness: loneliness,
                 alertness: alertness,
+                health: health,
                 lastUpdated: lastUpdated,
               ),
           createCompanionCallback:
@@ -1706,6 +1774,7 @@ class $$PetStateTableTableManager
                 Value<int> mood = const Value.absent(),
                 Value<int> loneliness = const Value.absent(),
                 Value<int> alertness = const Value.absent(),
+                Value<int> health = const Value.absent(),
                 required DateTime lastUpdated,
               }) => PetStateCompanion.insert(
                 id: id,
@@ -1714,6 +1783,7 @@ class $$PetStateTableTableManager
                 mood: mood,
                 loneliness: loneliness,
                 alertness: alertness,
+                health: health,
                 lastUpdated: lastUpdated,
               ),
           withReferenceMapper: (p0) => p0

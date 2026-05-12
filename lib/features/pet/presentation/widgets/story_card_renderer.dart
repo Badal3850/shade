@@ -17,73 +17,81 @@ class StoryCardRenderer extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 300,
-              height: 450,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.primary.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  )
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        width: double.infinity,
-                        color: colors.primary.withValues(alpha: 0.05),
-                        child: Icon(Icons.auto_awesome, size: 80, color: colors.primary.withValues(alpha: 0.3)),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'WEEK 18: THE DRIFT',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1,
-                                color: colors.primary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'A week of quiet contemplation and steady progress. Your pet has reached level 4.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                height: 1.4,
-                                color: colors.onSurface.withValues(alpha: 0.7),
-                              ),
-                            ),
-                            const Spacer(),
-                            Row(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final cardWidth = constraints.maxWidth < 400
+                    ? constraints.maxWidth - 32
+                    : 400.0;
+                final cardHeight = cardWidth * 1.5;
+                return Container(
+                  width: cardWidth,
+                  height: cardHeight,
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.primary.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            width: double.infinity,
+                            color: colors.primary.withValues(alpha: 0.05),
+                            child: Icon(Icons.auto_awesome, size: 80, color: colors.primary.withValues(alpha: 0.3)),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _StatChip(label: 'Steps', value: '12,402', color: colors.primary),
-                                const SizedBox(width: 8),
-                                _StatChip(label: 'Mood', value: 'Serene', color: colors.secondary),
+                                Text(
+                                  'WEEK 18: THE DRIFT',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1,
+                                    color: colors.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'A week of quiet contemplation and steady progress. Your pet has reached level 4.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    height: 1.4,
+                                    color: colors.onSurface.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Row(
+                                  children: [
+                                    _StatChip(label: 'Steps', value: '12,402', color: colors.primary),
+                                    const SizedBox(width: 8),
+                                    _StatChip(label: 'Mood', value: 'Serene', color: colors.secondary),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 32),
             FilledButton.icon(

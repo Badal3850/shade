@@ -6,6 +6,7 @@ import 'core/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
+import 'package:shade/features/onboarding/pet_name_manager.dart';
 
 class ShadeApp extends StatefulWidget {
   final ThemeManager? themeManager;
@@ -44,6 +45,7 @@ class _ShadeAppState extends State<ShadeApp> {
       providers: [
         ChangeNotifierProvider<ThemeManager>.value(value: _themeManager),
         ChangeNotifierProvider<PetStateProvider>.value(value: _petProvider),
+        ChangeNotifierProvider<PetNameManager>.value(value: sl<PetNameManager>()),
       ],
       child: MaterialApp(
         title: 'shade',
@@ -51,7 +53,7 @@ class _ShadeAppState extends State<ShadeApp> {
         theme: _themeManager.lightTheme,
         darkTheme: _themeManager.darkTheme,
         themeMode: _themeManager.currentMode,
-        initialRoute: '/',
+        initialRoute: AppRouter.initialRoute(),
         onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );

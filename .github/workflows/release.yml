@@ -21,7 +21,8 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.value }}
+      version: ${{ steps.release_meta.outputs.version }}
+      tag: ${{ steps.release_meta.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -30,6 +31,22 @@ jobs:
       - run: flutter config --no-analytics
       - run: flutter pub get
 
+      - name: Generate release metadata
+        id: release_meta
+        run: |
+          set -euo pipefail
+
+          RAW_VERSION="$(awk '/^version:/ { print $2; exit }' pubspec.yaml)"
+          VERSION_NAME="${RAW_VERSION%%+*}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
+          VERSION="${VERSION_NAME}+${BUILD_NUMBER}"
+          TAG="v${VERSION}"
+
+          echo "version_name=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
+          echo "build_number=${BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
       - name: Decode keystore
         run: |
           if [ -n "${{ secrets.ANDROID_KEYSTORE_B64 }}" ]; then
@@ -37,7 +54,10 @@ jobs:
           fi
 
       - name: Build release APKs
-        run: flutter build apk --release --split-per-abi
+        run: >
+          flutter build apk --release --split-per-abi
+          --build-name "${{ steps.release_meta.outputs.version_name }}"
+          --build-number "${{ steps.release_meta.outputs.build_number }}"
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -51,12 +71,6 @@ jobs:
             abi=$(echo "$f" | sed 's/app-//; s/-release//')
             mv "$f" "shade-${abi}.apk"
           done
-
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | tr -d ' ')
-          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -75,12 +89,21 @@ jobs:
         with:
           name: apks
 
-      - name: Create release
+      - name: Create or update release
         run: |
-          TAG="v${{ needs.build.outputs.version }}"
-          gh release create "$TAG" \
-            --title "shade ${{ needs.build.outputs.version }}" \
-            --notes "Automated release from commit ${{ github.sha }}" \
-            shade-*.apk
+          set -euo pipefail
+
+          TAG="${{ needs.build.outputs.tag }}"
+          VERSION="${{ needs.build.outputs.version }}"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" shade-*.apk --clobber
+          else
+            gh release create "$TAG" \
+              --target "${{ github.sha }}" \
+              --title "shade ${VERSION}" \
+              --notes "Automated release from commit ${{ github.sha }}" \
+              shade-*.apk
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

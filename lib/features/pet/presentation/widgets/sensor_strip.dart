@@ -45,7 +45,7 @@ List<_SensorItem> _buildSensorItems(SensorReading reading) {
   return [
     _SensorItem(
       label: 'MOVEMENT',
-      value: movement > 0.1 ? movement.toStringAsFixed(2) : 'IDLE',
+      value: movement > 10.5 ? movement.toStringAsFixed(2) : 'IDLE',
       icon: Icons.vibration,
     ),
     _SensorItem(

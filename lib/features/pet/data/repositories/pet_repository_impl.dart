@@ -1,3 +1,4 @@
+import 'package:shade/core/errors/failures.dart';
 import 'package:shade/features/pet/data/datasources/pet_db_datasource.dart';
 import 'package:shade/features/pet/data/models/pet_mappers.dart';
 import 'package:shade/features/pet/domain/entities/pet_entity.dart';
@@ -12,23 +13,35 @@ class PetRepositoryImpl implements PetRepository {
 
   @override
   Future<PetEntity> getCurrentState() async {
-    final data = await _dbDataSource.getCurrentState();
-    if (data == null) {
-      return const PetEntity();
+    try {
+      final data = await _dbDataSource.getCurrentState();
+      if (data == null) {
+        return const PetEntity();
+      }
+      return petStateDataToEntity(data);
+    } catch (e) {
+      throw DatabaseFailure(e.toString());
     }
-    return petStateDataToEntity(data);
   }
 
   @override
   Future<PetEntity> calculateDecay(DateTime lastVisitTime) async {
-    final current = await getCurrentState();
-    final decayed = _calculateDecay(current, lastVisitTime);
-    await _dbDataSource.upsertState(entityToCompanion(decayed, DateTime.now()));
-    return decayed;
+    try {
+      final current = await getCurrentState();
+      final decayed = _calculateDecay(current, lastVisitTime);
+      await _dbDataSource.upsertState(entityToCompanion(decayed, DateTime.now()));
+      return decayed;
+    } catch (e) {
+      throw DatabaseFailure(e.toString());
+    }
   }
 
   @override
   Future<void> updateState(PetEntity pet) async {
-    await _dbDataSource.upsertState(entityToCompanion(pet, DateTime.now()));
+    try {
+      await _dbDataSource.upsertState(entityToCompanion(pet, DateTime.now()));
+    } catch (e) {
+      throw DatabaseFailure(e.toString());
+    }
   }
 }
