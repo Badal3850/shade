@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shade/core/di/injection_container.dart';
+import 'package:provider/provider.dart';
 import 'package:shade/features/pet/presentation/providers/pet_state_provider.dart';
 import 'package:shade/features/pet/presentation/widgets/stats_section.dart';
 import 'package:shade/features/pet/presentation/widgets/sensor_strip.dart';
@@ -13,26 +13,11 @@ class PetStatsScreen extends StatefulWidget {
 }
 
 class _PetStatsScreenState extends State<PetStatsScreen> {
-  late final PetStateProvider _provider;
-
-  @override
-  void initState() {
-    super.initState();
-    _provider = sl<PetStateProvider>();
-    _provider.addListener(_onStateChanged);
-  }
-
-  void _onStateChanged() => setState(() {});
-
-  @override
-  void dispose() {
-    _provider.removeListener(_onStateChanged);
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_provider.isLoading) {
+    final provider = context.watch<PetStateProvider>();
+
+    if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -47,7 +32,7 @@ class _PetStatsScreenState extends State<PetStatsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
-            StatsSection(petState: _provider.petState)
+            StatsSection(petState: provider.petState)
                 .animate()
                 .fadeIn(duration: 600.ms)
                 .slideY(begin: -0.1, end: 0),
@@ -57,7 +42,7 @@ class _PetStatsScreenState extends State<PetStatsScreen> {
                 .fadeIn(delay: 200.ms, duration: 600.ms)
                 .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1)),
             const SizedBox(height: 24),
-            SensorStrip(sensorReading: _provider.sensorReading)
+            SensorStrip(sensorReading: provider.sensorReading)
                 .animate()
                 .fadeIn(delay: 400.ms, duration: 600.ms)
                 .slideY(begin: 0.1, end: 0),

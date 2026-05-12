@@ -99,7 +99,7 @@ class _SoftCharacterPetState extends State<SoftCharacterPet>
             builder: (context, _) {
               return Transform(
                 transform: Matrix4.identity()
-                  ..translate(0.0, _floatAnimation.value + _jumpAnimation.value)
+                  ..translateByDouble(0.0, _floatAnimation.value + _jumpAnimation.value, 0, 1)
                   ..rotateZ((_floatAnimation.value / 10) * 0.02)
                   ..rotateY(tiltX * 0.2)
                   ..rotateX(-tiltY * 0.1),

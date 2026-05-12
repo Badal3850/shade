@@ -10,7 +10,7 @@ class PixelGridPet extends StatefulWidget {
 }
 
 class _PixelGridPetState extends State<PixelGridPet>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _floatController;
   late final Animation<double> _floatAnimation;
   late final AnimationController _jumpController;
@@ -83,8 +83,7 @@ class _PixelGridPetState extends State<PixelGridPet>
               builder: (context, child) {
                 return Transform(
                   transform: Matrix4.identity()
-                    ..translate(tiltX * 15, _floatAnimation.value + _jumpAnimation.value + (tiltY * 5))
-                    ..skewX(-tiltX * 0.05),
+                    ..translateByDouble(tiltX * 15, _floatAnimation.value + _jumpAnimation.value + (tiltY * 5), 0, 1),
                   alignment: Alignment.center,
                   child: child,
                 );
